@@ -361,12 +361,16 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 if (message.length() > 8 && message.substring(2, 7).equals("image")) {
-                    JSONObject jsonObject = new JSONObject(message);
-                    JSONArray jsonArray = jsonObject.getJSONArray("image");
-                    gridMap.drawImageNumberCell(jsonArray.getInt(0), jsonArray.getInt(1), jsonArray.getInt(2));
-                    showLog("Image Added for index: " + jsonArray.getInt(0) + "," + jsonArray.getInt(1));
+//                    JSONObject jsonObject = new JSONObject(message);
+//                    JSONArray jsonArray = jsonObject.getJSONArray("image");
+//                    gridMap.drawImageNumberCell(jsonArray.getInt(0), jsonArray.getInt(1), jsonArray.getInt(2));
+//                    showLog("Image Added for index: " + jsonArray.getInt(0) + "," + jsonArray.getInt(1));
+//                    To clear checklist
+                    String[] splitImageMsg = message.split("\"");
+                    gridMap.drawImageNumberCell(Integer.parseInt(splitImageMsg[3]), Integer.parseInt(splitImageMsg[5]), Integer.parseInt(splitImageMsg[7]));
+                    showLog("Image Added for index: " + Integer.parseInt(splitImageMsg[3]) + "," + Integer.parseInt(splitImageMsg[5]));
                 }
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 showLog("Adding Image Failed");
             }
 
@@ -383,7 +387,7 @@ public class MainActivity extends AppCompatActivity {
                 if (message.length() > 9 && message.substring(2, 8).equals("status")) {
                     try {
                         String[] splitStatusMsg = message.split("\"");
-                        showLog(splitStatusMsg.toString());
+                        showLog("updateRobotStatus: " + splitStatusMsg.toString());
                         gridMap.printRobotStatus(splitStatusMsg[3]);
                         showLog("statusReceived: robot status updated");
                     } catch (Exception e) {
