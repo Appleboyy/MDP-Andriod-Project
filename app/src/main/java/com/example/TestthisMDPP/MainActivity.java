@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         MainActivity.context = getApplicationContext();
         this.sharedPreferences();
         editor.putString("message", "");
-        editor.putString("direction","None");
+        editor.putString("direction", "None");
         editor.putString("connStatus", "Disconnected");
         editor.commit();
 
@@ -183,15 +183,21 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public static Button getF1() { return f1; }
+    public static Button getF1() {
+        return f1;
+    }
 
-    public static Button getF2() { return f2; }
+    public static Button getF2() {
+        return f2;
+    }
 
     public static GridMap getGridMap() {
         return gridMap;
     }
 
-    public static TextView getRobotStatusTextView() {  return robotStatusTextView; }
+    public static TextView getRobotStatusTextView() {
+        return robotStatusTextView;
+    }
 
     public static void sharedPreferences() {
         sharedPreferences = MainActivity.getSharedPreferences(MainActivity.context);
@@ -221,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
         JSONObject jsonObject = new JSONObject();
         String message;
 
-        switch(name) {
+        switch (name) {
 //            case "starting":
             case "waypoint":
                 jsonObject.put(name, name);
@@ -249,14 +255,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void refreshDirection(String direction) {
         gridMap.setRobotDirection(direction);
-        directionAxisTextView.setText(sharedPreferences.getString("direction",""));
+        directionAxisTextView.setText(sharedPreferences.getString("direction", ""));
         printMessage("Direction is set to " + direction);
     }
 
     public static void refreshLabel() {
-        xAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[0]-1));
-        yAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[1]-1));
-        directionAxisTextView.setText(sharedPreferences.getString("direction",""));
+        xAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[0] - 1));
+        yAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[1] - 1));
+        directionAxisTextView.setText(sharedPreferences.getString("direction", ""));
     }
 
     public static void receiveMessage(String message) {
@@ -282,22 +288,21 @@ public class MainActivity extends AppCompatActivity {
             String status = intent.getStringExtra("Status");
             sharedPreferences();
 
-            if(status.equals("connected")){
+            if (status.equals("connected")) {
                 try {
                     myDialog.dismiss();
-                } catch(NullPointerException e){
+                } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
 
-                Log.d(TAG, "mBroadcastReceiver5: Device now connected to "+mDevice.getName());
-                Toast.makeText(MainActivity.this, "Device now connected to "+mDevice.getName(), Toast.LENGTH_LONG).show();
+                Log.d(TAG, "mBroadcastReceiver5: Device now connected to " + mDevice.getName());
+                Toast.makeText(MainActivity.this, "Device now connected to " + mDevice.getName(), Toast.LENGTH_LONG).show();
                 editor.putString("connStatus", "Connected to " + mDevice.getName());
 //                TextView connStatusTextView = findViewById(R.id.connStatusTextView);
 //                connStatusTextView.setText("Connected to " + mDevice.getName());
-            }
-            else if(status.equals("disconnected")){
-                Log.d(TAG, "mBroadcastReceiver5: Disconnected from "+mDevice.getName());
-                Toast.makeText(MainActivity.this, "Disconnected from "+mDevice.getName(), Toast.LENGTH_LONG).show();
+            } else if (status.equals("disconnected")) {
+                Log.d(TAG, "mBroadcastReceiver5: Disconnected from " + mDevice.getName());
+                Toast.makeText(MainActivity.this, "Disconnected from " + mDevice.getName(), Toast.LENGTH_LONG).show();
 //                mBluetoothConnection = new BluetoothConnectionService(MainActivity.this);
 //                mBluetoothConnection.startAcceptThread();
 
@@ -315,11 +320,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String message = intent.getStringExtra("receivedMessage");
-            showLog("receivedMessage: message --- " + message);
+            showLog("receivedMessage: message --- " + message + " ---");
             try {
-                if (message.length() > 7 && message.substring(2,6).equals("grid")) {
+                if (message.length() > 7 && message.substring(2, 6).equals("grid")) {
                     String resultString = "";
-                    String amdString = message.substring(11,message.length()-2);
+                    String amdString = message.substring(11, message.length() - 2);
                     showLog("amdString: " + amdString);
                     BigInteger hexBigIntegerExplored = new BigInteger(amdString, 16);
                     String exploredString = hexBigIntegerExplored.toString(2);
@@ -327,11 +332,11 @@ public class MainActivity extends AppCompatActivity {
                     while (exploredString.length() < 300)
                         exploredString = "0" + exploredString;
 
-                    for (int i=0; i<exploredString.length(); i=i+15) {
-                        int j=0;
+                    for (int i = 0; i < exploredString.length(); i = i + 15) {
+                        int j = 0;
                         String subString = "";
-                        while (j<15) {
-                            subString = subString + exploredString.charAt(j+i);
+                        while (j < 15) {
+                            subString = subString + exploredString.charAt(j + i);
                             j++;
                         }
                         resultString = subString + resultString;
@@ -341,7 +346,7 @@ public class MainActivity extends AppCompatActivity {
 
                     JSONObject amdObject = new JSONObject();
                     amdObject.put("explored", "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
-                    amdObject.put("length", amdString.length()*4);
+                    amdObject.put("length", amdString.length() * 4);
                     amdObject.put("obstacle", resultString);
                     JSONArray amdArray = new JSONArray();
                     amdArray.put(amdObject);
@@ -355,13 +360,17 @@ public class MainActivity extends AppCompatActivity {
             }
 
             try {
-                if (message.length() > 8 && message.substring(2,7).equals("image")) {
-                    JSONObject jsonObject = new JSONObject(message);
-                    JSONArray jsonArray = jsonObject.getJSONArray("image");
-                    gridMap.drawImageNumberCell(jsonArray.getInt(0),jsonArray.getInt(1),jsonArray.getInt(2));
-                    showLog("Image Added for index: " + jsonArray.getInt(0) + "," +jsonArray.getInt(1));
+                if (message.length() > 8 && message.substring(2, 7).equals("image")) {
+//                    JSONObject jsonObject = new JSONObject(message);
+//                    JSONArray jsonArray = jsonObject.getJSONArray("image");
+//                    gridMap.drawImageNumberCell(jsonArray.getInt(0), jsonArray.getInt(1), jsonArray.getInt(2));
+//                    showLog("Image Added for index: " + jsonArray.getInt(0) + "," + jsonArray.getInt(1));
+//                    To clear checklist
+                    String[] splitImageMsg = message.split("\"");
+                    gridMap.drawImageNumberCell(Integer.parseInt(splitImageMsg[3]), Integer.parseInt(splitImageMsg[5]), Integer.parseInt(splitImageMsg[7]));
+                    showLog("Image Added for index: " + Integer.parseInt(splitImageMsg[3]) + "," + Integer.parseInt(splitImageMsg[5]));
                 }
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 showLog("Adding Image Failed");
             }
 
@@ -374,7 +383,19 @@ public class MainActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     showLog("messageReceiver: try decode unsuccessful");
                 }
+            } else {
+                if (message.length() > 9 && message.substring(2, 8).equals("status")) {
+                    try {
+                        String[] splitStatusMsg = message.split("\"");
+                        showLog("updateRobotStatus: " + splitStatusMsg.toString());
+                        gridMap.printRobotStatus(splitStatusMsg[3]);
+                        showLog("statusReceived: robot status updated");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
+
             sharedPreferences();
             String receivedText = sharedPreferences.getString("message", "") + "\n" + message;
             editor.putString("message", receivedText);
@@ -384,12 +405,12 @@ public class MainActivity extends AppCompatActivity {
     };
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode){
+        switch (requestCode) {
             case 1:
-                if(resultCode == Activity.RESULT_OK){
+                if (resultCode == Activity.RESULT_OK) {
                     mBTDevice = (BluetoothDevice) data.getExtras().getParcelable("mBTDevice");
                     myUUID = (UUID) data.getSerializableExtra("myUUID");
                 }
@@ -397,33 +418,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
-        try{
+        try {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
             LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver5);
-        } catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
-        try{
+        try {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver5);
-        } catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
-        try{
+        try {
             IntentFilter filter2 = new IntentFilter("ConnectionStatus");
             LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver5, filter2);
-        } catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
     }
