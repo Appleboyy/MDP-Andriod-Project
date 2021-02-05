@@ -1,0 +1,90 @@
+com/example/TestthisMDPP/ui/main/PageViewModel.java
+ com.example.TestthisMDPP.ui.main.PageViewModel
+ com.example.TestthisMDPP.ui.main.PageViewModel$1
+com/example/TestthisMDPP/BuildConfig.java
+ com.example.TestthisMDPP.BuildConfig
+com/example/TestthisMDPP/ui/main/PlaceholderFragment.java
+ com.example.TestthisMDPP.ui.main.PlaceholderFragment
+ com.example.TestthisMDPP.ui.main.PlaceholderFragment$1
+com/example/TestthisMDPP/ui/main/DeviceListAdapter.java
+ com.example.TestthisMDPP.ui.main.DeviceListAdapter
+com/example/TestthisMDPP/ui/main/GridView.java
+ com.example.TestthisMDPP.ui.main.GridView
+ com.example.TestthisMDPP.ui.main.GridView$Cell
+com/example/TestthisMDPP/ui/main/ControlFragment.java
+ com.example.TestthisMDPP.ui.main.ControlFragment
+ com.example.TestthisMDPP.ui.main.ControlFragment$1
+ com.example.TestthisMDPP.ui.main.ControlFragment$10
+ com.example.TestthisMDPP.ui.main.ControlFragment$11
+ com.example.TestthisMDPP.ui.main.ControlFragment$12
+ com.example.TestthisMDPP.ui.main.ControlFragment$13
+ com.example.TestthisMDPP.ui.main.ControlFragment$2
+ com.example.TestthisMDPP.ui.main.ControlFragment$3
+ com.example.TestthisMDPP.ui.main.ControlFragment$4
+ com.example.TestthisMDPP.ui.main.ControlFragment$5
+ com.example.TestthisMDPP.ui.main.ControlFragment$6
+ com.example.TestthisMDPP.ui.main.ControlFragment$7
+ com.example.TestthisMDPP.ui.main.ControlFragment$8
+ com.example.TestthisMDPP.ui.main.ControlFragment$9
+com/example/TestthisMDPP/ui/main/SectionsPagerAdapter.java
+ com.example.TestthisMDPP.ui.main.SectionsPagerAdapter
+com/example/TestthisMDPP/ui/main/CommsFragment.java
+ com.example.TestthisMDPP.ui.main.CommsFragment
+ com.example.TestthisMDPP.ui.main.CommsFragment$1
+com/example/TestthisMDPP/ui/main/DirectionFragment.java
+ com.example.TestthisMDPP.ui.main.DirectionFragment
+ com.example.TestthisMDPP.ui.main.DirectionFragment$1
+ com.example.TestthisMDPP.ui.main.DirectionFragment$2
+com/example/TestthisMDPP/ui/main/BluetoothConnectionService.java
+ com.example.TestthisMDPP.ui.main.BluetoothConnectionService
+ com.example.TestthisMDPP.ui.main.BluetoothConnectionService$AcceptThread
+ com.example.TestthisMDPP.ui.main.BluetoothConnectionService$ConnectThread
+ com.example.TestthisMDPP.ui.main.BluetoothConnectionService$ConnectThread$1
+ com.example.TestthisMDPP.ui.main.BluetoothConnectionService$ConnectedThread
+com/example/TestthisMDPP/ui/main/GridMap.java
+ com.example.TestthisMDPP.ui.main.GridMap
+ com.example.TestthisMDPP.ui.main.GridMap$1
+ com.example.TestthisMDPP.ui.main.GridMap$Cell
+com/example/TestthisMDPP/ui/main/MapTabFragment.java
+ com.example.TestthisMDPP.ui.main.MapTabFragment
+ com.example.TestthisMDPP.ui.main.MapTabFragment$1
+ com.example.TestthisMDPP.ui.main.MapTabFragment$2
+ com.example.TestthisMDPP.ui.main.MapTabFragment$3
+ com.example.TestthisMDPP.ui.main.MapTabFragment$4
+ com.example.TestthisMDPP.ui.main.MapTabFragment$5
+ com.example.TestthisMDPP.ui.main.MapTabFragment$6
+ com.example.TestthisMDPP.ui.main.MapTabFragment$7
+ com.example.TestthisMDPP.ui.main.MapTabFragment$8
+ com.example.TestthisMDPP.ui.main.MapTabFragment$9
+com/example/TestthisMDPP/ui/main/ReconfigureFragment.java
+ com.example.TestthisMDPP.ui.main.ReconfigureFragment
+ com.example.TestthisMDPP.ui.main.ReconfigureFragment$1
+ com.example.TestthisMDPP.ui.main.ReconfigureFragment$2
+com/example/TestthisMDPP/MainActivity.java
+ com.example.TestthisMDPP.MainActivity
+ com.example.TestthisMDPP.MainActivity$1
+ com.example.TestthisMDPP.MainActivity$2
+ com.example.TestthisMDPP.MainActivity$3
+ com.example.TestthisMDPP.MainActivity$4
+ com.example.TestthisMDPP.MainActivity$5
+ com.example.TestthisMDPP.MainActivity$6
+ com.example.TestthisMDPP.MainActivity$7
+ com.example.TestthisMDPP.MainActivity$8
+ com.example.TestthisMDPP.MainActivity$9
+com/example/TestthisMDPP/ui/main/MapInformation.java
+ com.example.TestthisMDPP.ui.main.MapInformation
+ com.example.TestthisMDPP.ui.main.MapInformation$1
+com/example/TestthisMDPP/ui/main/BluetoothPopUp.java
+ com.example.TestthisMDPP.ui.main.BluetoothPopUp
+ com.example.TestthisMDPP.ui.main.BluetoothPopUp$1
+ com.example.TestthisMDPP.ui.main.BluetoothPopUp$10
+ com.example.TestthisMDPP.ui.main.BluetoothPopUp$11
+ com.example.TestthisMDPP.ui.main.BluetoothPopUp$12
+ com.example.TestthisMDPP.ui.main.BluetoothPopUp$2
+ com.example.TestthisMDPP.ui.main.BluetoothPopUp$3
+ com.example.TestthisMDPP.ui.main.BluetoothPopUp$4
+ com.example.TestthisMDPP.ui.main.BluetoothPopUp$5
+ com.example.TestthisMDPP.ui.main.BluetoothPopUp$6
+ com.example.TestthisMDPP.ui.main.BluetoothPopUp$7
+ com.example.TestthisMDPP.ui.main.BluetoothPopUp$8
+ com.example.TestthisMDPP.ui.main.BluetoothPopUp$9
