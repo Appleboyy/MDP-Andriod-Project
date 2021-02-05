@@ -1,6 +1,18 @@
 # Default ignored files
 /shelf/
 /workspace.xml
-/*/build/
+
+# Android Studio
+*.iml
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+
+# Local configuration file (sdk path, etc)
 local.properties
-.gradle/
+
