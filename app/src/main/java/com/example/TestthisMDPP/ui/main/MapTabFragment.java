@@ -22,6 +22,8 @@ import com.example.TestthisMDPP.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class MapTabFragment extends Fragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
@@ -214,17 +216,18 @@ public class MapTabFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 showLog("Clicked updateButton");
+                GridMap.clearObstacleCoord();
                 MainActivity.printMessage("sendArena");
                 manualUpdateRequest = true;
                 showLog("Exiting updateButton");
-                try {
-                    String message = "{\"map\":[{\"explored\": \"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\",\"length\":300,\"obstacle\":\"00000000000000000706180400080010001e000400000000200044438f840000000000000080\"}]}";
-
-                    gridMap.setReceivedJsonObject(new JSONObject(message));
-                    gridMap.updateMapInformation();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    String message = "{\"map\":[{\"explored\": \"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\",\"length\":300,\"obstacle\":\"00000000000000000706180400080010001e000400000000200044438f840000000000000080\"}]}";
+//
+//                    gridMap.setReceivedJsonObject(new JSONObject(message));
+//                    gridMap.updateMapInformation();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
             }
         });
 
