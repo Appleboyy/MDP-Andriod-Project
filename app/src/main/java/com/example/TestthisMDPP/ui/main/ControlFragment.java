@@ -156,7 +156,7 @@ public class ControlFragment extends Fragment implements SensorEventListener {
                     MainActivity.printMessage("W1|");
                 }
                 else
-                    updateStatus("Please press 'STARTING POINT'");
+                    updateStatus("Please press 'SET STARTPOINT'");
                 showLog("Exiting moveForwardImageBtn");
             }
         });
@@ -173,7 +173,7 @@ public class ControlFragment extends Fragment implements SensorEventListener {
                     MainActivity.printMessage("D|");
                 }
                 else
-                    updateStatus("Please press 'STARTING POINT'");
+                    updateStatus("Please press 'SET STARTPOINT'");
                 showLog("Exiting turnRightImageBtn");
             }
         });
@@ -194,7 +194,7 @@ public class ControlFragment extends Fragment implements SensorEventListener {
                     MainActivity.printMessage("S1|");
                 }
                 else
-                    updateStatus("Please press 'STARTING POINT'");
+                    updateStatus("Please press 'SET STARTPOINT'");
                 showLog("Exiting moveBackwardImageBtn");
             }
         });
@@ -212,7 +212,7 @@ public class ControlFragment extends Fragment implements SensorEventListener {
                     MainActivity.printMessage("A|");
                 }
                 else
-                    updateStatus("Please press 'STARTING POINT'");
+                    updateStatus("Please press 'SET STARTPOINT'");
                 showLog("Exiting turnLeftImageBtn");
             }
         });

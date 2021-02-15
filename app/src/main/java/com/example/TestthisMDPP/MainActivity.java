@@ -353,6 +353,8 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject amdMessage = new JSONObject();
                     amdMessage.put("map", amdArray);
                     message = String.valueOf(amdMessage);
+                    gridMap.setReceivedJsonObject(amdMessage);
+                    gridMap.updateMapInformation();
                     showLog("Executed for AMD message, message: " + message);
                 }
             } catch (JSONException e) {
@@ -375,6 +377,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (gridMap.getAutoUpdate() || MapTabFragment.manualUpdateRequest) {
+                showLog("messageReceiver: update map request");
                 try {
                     gridMap.setReceivedJsonObject(new JSONObject(message));
                     gridMap.updateMapInformation();
