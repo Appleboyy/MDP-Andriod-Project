@@ -1,4 +1,4 @@
-package com.example.TestthisMDPP.ui.main;
+package com.example.MDP_Android.ui.main;
 
 import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;

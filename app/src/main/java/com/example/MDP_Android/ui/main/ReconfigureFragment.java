@@ -1,4 +1,4 @@
-package com.example.TestthisMDPP.ui.main;
+package com.example.MDP_Android.ui.main;
 
 import android.app.DialogFragment;
 import android.content.Context;
@@ -16,8 +16,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import com.example.TestthisMDPP.MainActivity;
-import com.example.TestthisMDPP.R;
+import com.example.MDP_Android.MainActivity;
+import com.example.MDP_Android.R;
 
 public class ReconfigureFragment extends DialogFragment {
     private static final String TAG = "ReconfigureFragment";

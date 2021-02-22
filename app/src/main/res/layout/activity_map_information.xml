@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.TestthisMDPP.ui.main.MapInformation">
+    tools:context="com.example.MDP_Android.ui.main.MapInformation">
 
     <TextView
         android:id="@+id/mapTitleTextView"
@@ -23,7 +23,7 @@
 
     <view
         android:id="@+id/mapInformationView"
-        class="com.example.TestthisMDPP.ui.main.GridView"
+        class="com.example.MDP_Android.ui.main.GridView"
         android:layout_width="500dp"
         android:layout_height="650dp"
         android:layout_marginEnd="25dp"

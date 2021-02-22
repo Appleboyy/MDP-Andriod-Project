@@ -1,4 +1,4 @@
-package com.example.TestthisMDPP.ui.main;
+package com.example.MDP_Android.ui.main;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -25,8 +25,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.example.TestthisMDPP.MainActivity;
-import com.example.TestthisMDPP.R;
+import com.example.MDP_Android.MainActivity;
+import com.example.MDP_Android.R;
 
 import static android.content.Context.SENSOR_SERVICE;
 
@@ -229,7 +229,7 @@ public class ControlFragment extends Fragment implements SensorEventListener {
                 }
                 else if (exploreToggleBtn.getText().equals("STOP")) {
                     showToast("Exploration timer start!");
-                    MainActivity.printMessage("ES|");
+                    MainActivity.printMessage("EX_START");
                     robotStatusTextView.setText("Exploration Started");
                     exploreTimer = System.currentTimeMillis();
                     timerHandler.postDelayed(timerRunnableExplore, 0);
@@ -253,7 +253,7 @@ public class ControlFragment extends Fragment implements SensorEventListener {
                 }
                 else if (fastestToggleBtn.getText().equals("STOP")) {
                     showToast("Fastest timer start!");
-                    MainActivity.printMessage("FS|");
+                    MainActivity.printMessage("FP_START");
                     robotStatusTextView.setText("Fastest Path Started");
                     fastestTimer = System.currentTimeMillis();
                     timerHandler.postDelayed(timerRunnableFastest, 0);

@@ -1,4 +1,4 @@
-package com.example.TestthisMDPP;
+package com.example.MDP_Android;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -20,14 +20,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 
-import com.example.TestthisMDPP.ui.main.BluetoothConnectionService;
-import com.example.TestthisMDPP.ui.main.BluetoothPopUp;
-import com.example.TestthisMDPP.ui.main.CommsFragment;
-import com.example.TestthisMDPP.ui.main.GridMap;
-import com.example.TestthisMDPP.ui.main.MapInformation;
-import com.example.TestthisMDPP.ui.main.MapTabFragment;
-import com.example.TestthisMDPP.ui.main.ReconfigureFragment;
-import com.example.TestthisMDPP.ui.main.SectionsPagerAdapter;
+import com.example.MDP_Android.ui.main.BluetoothConnectionService;
+import com.example.MDP_Android.ui.main.BluetoothPopUp;
+import com.example.MDP_Android.ui.main.CommsFragment;
+import com.example.MDP_Android.ui.main.GridMap;
+import com.example.MDP_Android.ui.main.MapInformation;
+import com.example.MDP_Android.ui.main.MapTabFragment;
+import com.example.MDP_Android.ui.main.ReconfigureFragment;
+import com.example.MDP_Android.ui.main.SectionsPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 
 import org.json.JSONArray;
@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
                 jsonObject.put(name, name);
                 jsonObject.put("x", x);
                 jsonObject.put("y", y);
-                message = name + " (" + x + "," + y + ")";
+                message = "WP:" + x + ":" + y;
                 break;
             default:
                 message = "Unexpected default for printMessage: " + name;
@@ -322,7 +322,9 @@ public class MainActivity extends AppCompatActivity {
             String message = intent.getStringExtra("receivedMessage");
             showLog("receivedMessage: message --- " + message + " ---");
             try {
-                if (message.length() > 7 && message.substring(2, 6).equals("grid")) {
+                if (message.length() > 7 && message.substring(2, 6).equals("grid") && (gridMap.getAutoUpdate() || MapTabFragment.manualUpdateRequest)) {
+                    showLog("GMAU 4 grid: " + gridMap.getAutoUpdate());
+                    showLog("MTFMUR 4 grid: " + MapTabFragment.manualUpdateRequest);
                     String resultString = "";
                     String amdString = message.substring(11, message.length() - 2);
                     showLog("amdString: " + amdString);
@@ -377,6 +379,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (gridMap.getAutoUpdate() || MapTabFragment.manualUpdateRequest) {
+                showLog("GMAU: " + gridMap.getAutoUpdate());
+                showLog("MTFMUR: " + MapTabFragment.manualUpdateRequest);
                 showLog("messageReceiver: update map request");
                 try {
                     gridMap.setReceivedJsonObject(new JSONObject(message));

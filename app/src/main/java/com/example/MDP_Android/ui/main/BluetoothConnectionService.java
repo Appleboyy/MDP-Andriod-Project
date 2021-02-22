@@ -1,4 +1,4 @@
-package com.example.TestthisMDPP.ui.main;
+package com.example.MDP_Android.ui.main;
 
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;

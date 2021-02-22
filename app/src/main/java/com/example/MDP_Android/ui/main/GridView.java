@@ -1,4 +1,4 @@
-package com.example.TestthisMDPP.ui.main;
+package com.example.MDP_Android.ui.main;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,7 +13,7 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import com.example.TestthisMDPP.R;
+import com.example.MDP_Android.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;

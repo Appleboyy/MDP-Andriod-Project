@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dist="http://schemas.android.com/apk/distribution"
-    package="com.example.TestthisMDPP">
+    package="com.example.MDP_Android">
 
     <dist:module dist:instant="true" />
 
@@ -25,7 +25,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.example.TestthisMDPP.MainActivity"
+            android:name="com.example.MDP_Android.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan">
@@ -35,8 +35,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.TestthisMDPP.ui.main.BluetoothPopUp"></activity>
-        <activity android:name="com.example.TestthisMDPP.ui.main.MapInformation" />
+        <activity android:name="com.example.MDP_Android.ui.main.BluetoothPopUp"></activity>
+        <activity android:name="com.example.MDP_Android.ui.main.MapInformation" />
     </application>
 
 </manifest>
