@@ -221,7 +221,7 @@
 
             <view
                 android:id="@+id/mapView"
-                class="com.example.TestthisMDPP.ui.main.GridMap"
+                class="com.example.MDP_Android.ui.main.GridMap"
                 android:layout_width="394dp"
                 android:layout_height="497dp"
                 app:layout_constraintBottom_toBottomOf="parent"

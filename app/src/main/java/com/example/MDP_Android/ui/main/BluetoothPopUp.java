@@ -1,4 +1,4 @@
-package com.example.TestthisMDPP.ui.main;
+package com.example.MDP_Android.ui.main;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -28,7 +28,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.example.TestthisMDPP.R;
+import com.example.MDP_Android.R;
 
 import java.util.ArrayList;
 import java.util.Set;

@@ -1,4 +1,4 @@
-package com.example.TestthisMDPP.ui.main;
+package com.example.MDP_Android.ui.main;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.example.TestthisMDPP.R;
+import com.example.MDP_Android.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.nio.charset.Charset;

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MDP_Andriod test</string>
+    <string name="app_name">MDP_Android</string>
     <string name="tab_text_1">Bluetooth</string>
     <string name="tab_text_2">Comms</string>
     <string name="tab_text_3">Map</string>

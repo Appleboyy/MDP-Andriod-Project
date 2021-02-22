@@ -1,4 +1,4 @@
-package com.example.TestthisMDPP.ui.main;
+package com.example.MDP_Android.ui.main;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -16,13 +16,10 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.example.TestthisMDPP.MainActivity;
-import com.example.TestthisMDPP.R;
+import com.example.MDP_Android.MainActivity;
+import com.example.MDP_Android.R;
 
 import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 public class MapTabFragment extends Fragment {
 

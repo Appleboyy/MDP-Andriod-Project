@@ -1,4 +1,4 @@
-package com.example.TestthisMDPP.ui.main;
+package com.example.MDP_Android.ui.main;
 
 import android.app.Activity;
 import android.content.Context;
@@ -21,8 +21,8 @@ import android.widget.ToggleButton;
 
 import androidx.annotation.Nullable;
 
-import com.example.TestthisMDPP.MainActivity;
-import com.example.TestthisMDPP.R;
+import com.example.MDP_Android.MainActivity;
+import com.example.MDP_Android.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -230,9 +230,11 @@ public class GridMap extends View {
 
     public void setAutoUpdate(boolean autoUpdate) throws JSONException {
         showLog(String.valueOf(backupMapInformation));
-        if (!autoUpdate)
+        if (!autoUpdate) {
+            showLog("manual");
             backupMapInformation = this.getReceivedJsonObject();
-        else {
+        } else {
+            showLog("auto");
             setReceivedJsonObject(backupMapInformation);
             backupMapInformation = null;
             this.updateMapInformation();
@@ -366,7 +368,7 @@ public class GridMap extends View {
         this.setCellSize(getWidth() / (COL + 1));
     }
 
-    private int convertRow(int row) {
+    public int convertRow(int row) {
         return (20 - row);
     }
 
@@ -784,9 +786,9 @@ public class GridMap extends View {
                     infoJsonArray = mapInformation.getJSONArray("robotPosition");
 //                    infoJsonObject = infoJsonArray.getJSONObject(0);
 
-                    for (int row = ROW - 1; row >= 0; row--)
-                        for (int col = 1; col <= COL; col++)
-                            cells[col][row].setType("unexplored");
+//                    for (int row = ROW - 1; row >= 0; row--)
+//                        for (int col = 1; col <= COL; col++)
+//                            cells[col][row].setType("unexplored");
 
                     String direction;
                     if (infoJsonArray.getInt(2) == 90) {

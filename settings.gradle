@@ -1,2 +1,2 @@
 include ':app'
-rootProject.name='TestthisMDPP'
+rootProject.name='MDP_Android'

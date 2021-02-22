@@ -1,4 +1,4 @@
-package com.example.TestthisMDPP.ui.main;
+package com.example.MDP_Android.ui.main;
 
 import android.content.Context;
 
@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.example.TestthisMDPP.R;
+import com.example.MDP_Android.R;
 
 /**
  * A [FragmentPagerAdapter] that returns a fragment corresponding to

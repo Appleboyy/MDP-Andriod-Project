@@ -1,4 +1,4 @@
-package com.example.TestthisMDPP;
+package com.example.MDP_Android;
 
 import org.junit.Test;
 
