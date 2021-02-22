@@ -41,6 +41,8 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity {
 
     // Declaration Variables
+
+    //hfdjhfjdhjfhdjhfh
     private static SharedPreferences sharedPreferences;
     private static SharedPreferences.Editor editor;
     private static Context context;
