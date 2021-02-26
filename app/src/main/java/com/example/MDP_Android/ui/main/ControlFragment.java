@@ -44,7 +44,7 @@ public class ControlFragment extends Fragment implements SensorEventListener {
     // Control Button
     ImageButton moveForwardImageBtn, turnRightImageBtn, moveBackImageBtn, turnLeftImageBtn, exploreResetButton, fastestResetButton;
     private static long exploreTimer, fastestTimer;
-    ToggleButton exploreButton, fastestButton;
+    ToggleButton exploreButton, fastestButton, imageButton;
     TextView exploreTimeTextView, fastestTimeTextView, robotStatusTextView;
     Switch phoneTiltSwitch;
     static Button calibrateButton;
@@ -125,6 +125,7 @@ public class ControlFragment extends Fragment implements SensorEventListener {
         fastestTimeTextView = root.findViewById(R.id.fastestTimeTextView);
         exploreButton = root.findViewById(R.id.exploreToggleBtn);
         fastestButton = root.findViewById(R.id.fastestToggleBtn);
+        imageButton = root.findViewById(R.id.imageToggleBtn);
         exploreResetButton = root.findViewById(R.id.exploreResetImageBtn);
         fastestResetButton = root.findViewById(R.id.fastestResetImageBtn);
         phoneTiltSwitch = root.findViewById(R.id.phoneTiltSwitch);
@@ -260,14 +261,38 @@ public class ControlFragment extends Fragment implements SensorEventListener {
                 }
                 else
                     showToast(fastestToggleBtn.getText().toString());
-                showLog("Exiting fastestToggleBtn");            }
+                showLog("Exiting fastestToggleBtn");
+            }
+        });
+
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLog("Clicked imageToggleBtn");
+                ToggleButton imageToggleBtn = (ToggleButton) v;
+                if (imageToggleBtn.getText().equals("IMAGE")) {
+                    showToast("Fastest timer stop!");
+                    robotStatusTextView.setText("Image Recognition Stopped");
+//                    timerHandler.removeCallbacks(timerRunnableFastest);
+                }
+                else if (imageToggleBtn.getText().equals("STOP")) {
+                    showToast("Image recognition start!");
+                    MainActivity.printMessage("IR_START");
+                    robotStatusTextView.setText("Image Recognition Started");
+//                    fastestTimer = System.currentTimeMillis();
+//                    timerHandler.postDelayed(timerRunnableFastest, 0);
+                }
+                else
+                    showToast(imageToggleBtn.getText().toString());
+                showLog("Exiting imageToggleBtn");
+            }
         });
 
         exploreResetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showLog("Clicked exploreResetImageBtn");
-                showToast("Reseting exploration time...");
+                showToast("Resetting exploration time...");
                 exploreTimeTextView.setText("00:00");
                 robotStatusTextView.setText("Not Available");
                 if(exploreButton.isChecked())

@@ -7,15 +7,15 @@
 
     <Button
         android:id="@+id/calibrateButton"
-        android:layout_width="157dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_width="132dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
         android:clickable="true"
         android:text="CALIBRATE"
         android:textAlignment="center"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.801"
+        app:layout_constraintHorizontal_bias="0.965"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fastestToggleBtn" />
 
@@ -150,6 +150,19 @@
         android:layout_marginTop="8dp"
         android:text="FASTEST"
         android:textOff="FASTEST"
+        android:textOn="STOP"
+        app:layout_constraintStart_toEndOf="@+id/rightImageBtn"
+        app:layout_constraintTop_toBottomOf="@+id/exploreToggleBtn" />
+
+    <ToggleButton
+        android:id="@+id/imageToggleBtn"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="76dp"
+        android:layout_marginLeft="76dp"
+        android:layout_marginTop="64dp"
+        android:text="IMAGE"
+        android:textOff="IMAGE"
         android:textOn="STOP"
         app:layout_constraintStart_toEndOf="@+id/rightImageBtn"
         app:layout_constraintTop_toBottomOf="@+id/exploreToggleBtn" />
