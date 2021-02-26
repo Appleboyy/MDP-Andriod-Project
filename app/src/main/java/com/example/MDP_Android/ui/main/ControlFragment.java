@@ -153,7 +153,7 @@ public class ControlFragment extends Fragment implements SensorEventListener {
                         updateStatus("moving forward");
                     else
                         updateStatus("Unable to move forward");
-                    MainActivity.printMessage("W1|");
+                    MainActivity.printMessage("w");
                 }
                 else
                     updateStatus("Please press 'SET STARTPOINT'");
@@ -170,7 +170,7 @@ public class ControlFragment extends Fragment implements SensorEventListener {
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("right");
                     MainActivity.refreshLabel();
-                    MainActivity.printMessage("D|");
+                    MainActivity.printMessage("d");
                 }
                 else
                     updateStatus("Please press 'SET STARTPOINT'");
@@ -191,7 +191,7 @@ public class ControlFragment extends Fragment implements SensorEventListener {
                         updateStatus("moving backward");
                     else
                         updateStatus("Unable to move backward");
-                    MainActivity.printMessage("S1|");
+                    MainActivity.printMessage("s");
                 }
                 else
                     updateStatus("Please press 'SET STARTPOINT'");
@@ -209,7 +209,7 @@ public class ControlFragment extends Fragment implements SensorEventListener {
                     gridMap.moveRobot("left");
                     MainActivity.refreshLabel();
                     updateStatus("turning left");
-                    MainActivity.printMessage("A|");
+                    MainActivity.printMessage("a");
                 }
                 else
                     updateStatus("Please press 'SET STARTPOINT'");

@@ -599,7 +599,7 @@ public class GridMap extends View {
                     } else if (direction.equals("down")) {
                         directionInt = 2;
                     }
-                    MainActivity.printMessage("starting " + "(" + String.valueOf(row - 1) + "," + String.valueOf(column - 1) + "," + String.valueOf(directionInt) + ")");
+                    MainActivity.printMessage("SP:" + String.valueOf(row - 1) + ":" + String.valueOf(column - 1) + ":" + String.valueOf(directionInt));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
