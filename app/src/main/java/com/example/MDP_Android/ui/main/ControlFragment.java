@@ -199,7 +199,7 @@ public class ControlFragment extends Fragment implements SensorEventListener {
                         updateStatus("Unable to move backward");
                         gridMap.printRobotStatus("holding position");
                     }
-                    MainActivity.printMessage("s");
+                    MainActivity.printMessage("TAKE");
                 }
                 else
                     updateStatus("Please press 'SET STARTPOINT'");
