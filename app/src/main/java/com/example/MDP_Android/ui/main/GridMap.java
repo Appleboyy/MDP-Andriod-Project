@@ -39,6 +39,7 @@ public class GridMap extends View {
         initMap();
     }
 
+//     Declare Variables
     SharedPreferences sharedPreferences;
 
     private Paint blackPaint = new Paint();
@@ -726,26 +727,34 @@ public class GridMap extends View {
         String hexStringExplored, hexStringObstacle, exploredString, obstacleString;
         BigInteger hexBigIntegerExplored, hexBigIntegerObstacle;
         String message;
+        String robotCenter = null;
 
         if (mapInformation == null)
             return;
 
+        showLog("LENGTH MapInfo: " + mapInformation.length());
         for (int i = 0; i < mapInformation.names().length(); i++) {
             message = "updateMapInformation Default message";
             showLog("MapInfo: " + mapInformation.names().getString(i));
             switch (mapInformation.names().getString(i)) {
                 case "map":
-                    infoJsonArray = mapInformation.getJSONArray("map");
-                    infoJsonObject = infoJsonArray.getJSONObject(0);
+                    showLog("map CHECK");
+                    showLog("mapFIND: " + mapInformation.getString("map"));
+//                    infoJsonArray = mapInformation.getJSONArray("map");
+//                    showLog("READ: " + infoJsonArray.toString());
+//                    infoJsonObject = infoJsonArray.getJSONObject(0);
+//                    showLog("READ: " + infoJsonObject.toString());
 
-                    hexStringExplored = infoJsonObject.getString("explored");
+//                    hexStringExplored = infoJsonObject.getString("explored");
+                    hexStringExplored = mapInformation.getString("map");
                     hexBigIntegerExplored = new BigInteger(hexStringExplored, 16);
                     exploredString = hexBigIntegerExplored.toString(2);
+//                    exploredString = exploredString.substring(2, exploredString.length() - 2);
                     showLog("updateMapInformation.exploredString: " + exploredString);
-
+                    showLog(String.valueOf(exploredString.length()));
                     int x, y;
-                    for (int j = 0; j < exploredString.length() - 4; j++) {
-                        y = 19 - (j / 15);
+                    for (int j = 0; j < (exploredString.length() - 4); j++) {
+                        y = 19 - (j /  15);
                         x = 1 + j - ((19 - y) * 15);
                         if ((String.valueOf(exploredString.charAt(j + 2))).equals("1") && !cells[x][y].type.equals("robot"))
                             cells[x][y].setType("explored");
@@ -753,10 +762,12 @@ public class GridMap extends View {
                             cells[x][y].setType("unexplored");
                     }
 
-                    int length = infoJsonObject.getInt("length");
-
-                    hexStringObstacle = infoJsonObject.getString("obstacle");
+//                    int length = infoJsonObject.getInt("length");
+//
+//                    hexStringObstacle = infoJsonObject.getString("obstacle");
+                    hexStringObstacle = mapInformation.getString("obstacle");
                     showLog("updateMapInformation hexStringObstacle: " + hexStringObstacle);
+                    int length = hexStringObstacle.length() * 4;
                     hexBigIntegerObstacle = new BigInteger(hexStringObstacle, 16);
                     showLog("updateMapInformation hexBigIntegerObstacle: " + hexBigIntegerObstacle);
                     obstacleString = hexBigIntegerObstacle.toString(2);
@@ -781,21 +792,25 @@ public class GridMap extends View {
                         cells[waypointCoord[0]][20 - waypointCoord[1]].setType("waypoint");
                     break;
                 case "robotPosition":
+                    showLog("roboPos REACHED");
                     if (canDrawRobot)
                         this.setOldRobotCoord(curCoord[0], curCoord[1]);
                     infoJsonArray = mapInformation.getJSONArray("robotPosition");
+                    showLog("roboPos1: " + infoJsonArray.getString(0));
+                    showLog("roboPos2: " + infoJsonArray.getString(1));
 //                    infoJsonObject = infoJsonArray.getJSONObject(0);
+//                    showLog("roboPos3: " + infoJsonObject.toString());
 
 //                    for (int row = ROW - 1; row >= 0; row--)
 //                        for (int col = 1; col <= COL; col++)
 //                            cells[col][row].setType("unexplored");
 
                     String direction;
-                    if (infoJsonArray.getInt(2) == 90) {
+                    if (infoJsonArray.getString(2) == "E") {
                         direction = "right";
-                    } else if (infoJsonArray.getInt(2) == 180) {
+                    } else if (infoJsonArray.getString(2) == "S") {
                         direction = "down";
-                    } else if (infoJsonArray.getInt(2) == 270) {
+                    } else if (infoJsonArray.getString(2) == "W") {
                         direction = "left";
                     } else {
                         direction = "up";
@@ -804,21 +819,51 @@ public class GridMap extends View {
                     this.setCurCoord(infoJsonArray.getInt(0) + 2, convertRow(infoJsonArray.getInt(1)) - 1, direction);
                     canDrawRobot = true;
                     break;
+                case "robotCenter":
+                    showLog("roboCenter REACHED");
+                    showLog(curCoord[0] + ", " + curCoord[1]);
+                    if (canDrawRobot)
+                        this.setOldRobotCoord(curCoord[0], curCoord[1]);
+                    robotCenter = mapInformation.getString("robotCenter");
+                    showLog("roboCenter: " + robotCenter.toString());
+
+                    this.setStartCoord(Integer.parseInt(String.valueOf(robotCenter.charAt(1))), Integer.parseInt(String.valueOf(robotCenter.charAt(4))));
+                    canDrawRobot = true;
+                    break;
+                case "heading":
+                    showLog("roboHeading REACHED");
+                    String robotHeading = mapInformation.getString("heading");
+                    showLog("roboHeading: " + robotHeading);
+
+                    String roboHead = String.valueOf(robotHeading.charAt(0));
+                    if (roboHead.contentEquals("E")) {
+                        roboHead = "right";
+                    } else if (roboHead.contentEquals("S")) {
+                        roboHead = "down";
+                    } else if (roboHead.contentEquals("W")) {
+                        roboHead = "left";
+                    } else {
+                        roboHead = "up";
+                    }
+                    showLog("roboHead: " + roboHead);
+                    this.setCurCoord(Integer.parseInt(String.valueOf(robotCenter.charAt(1))) + 1, Integer.parseInt(String.valueOf(robotCenter.charAt(4))) + 1, roboHead);
+                    canDrawRobot = true;
+                    break;
                 case "waypoint":
                     infoJsonArray = mapInformation.getJSONArray("waypoint");
                     infoJsonObject = infoJsonArray.getJSONObject(0);
                     this.setWaypointCoord(infoJsonObject.getInt("x"), infoJsonObject.getInt("y"));
                     setWaypointStatus = true;
                     break;
-                case "obstacle":
-                    infoJsonArray = mapInformation.getJSONArray("obstacle");
-                    for (int j = 0; j < infoJsonArray.length(); j++) {
-                        infoJsonObject = infoJsonArray.getJSONObject(j);
-                        this.setObstacleCoord(infoJsonObject.getInt("x"), infoJsonObject.getInt("y"));
-                    }
-                    message = "No. of Obstacle: " + String.valueOf(infoJsonArray.length());
-                    showLog(message);
-                    break;
+//                case "obstacle":
+//                    infoJsonArray = mapInformation.getJSONArray("obstacle");
+//                    for (int j = 0; j < infoJsonArray.length(); j++) {
+//                        infoJsonObject = infoJsonArray.getJSONObject(j);
+//                        this.setObstacleCoord(infoJsonObject.getInt("x"), infoJsonObject.getInt("y"));
+//                    }
+//                    message = "No. of Obstacle: " + String.valueOf(infoJsonArray.length());
+//                    showLog(message);
+//                    break;
                 case "arrow":
                     infoJsonArray = mapInformation.getJSONArray("arrow");
                     for (int j = 0; j < infoJsonArray.length(); j++) {

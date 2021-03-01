@@ -150,10 +150,13 @@ public class ControlFragment extends Fragment implements SensorEventListener {
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("forward");
                     MainActivity.refreshLabel();
-                    if (gridMap.getValidPosition())
+                    if (gridMap.getValidPosition()) {
                         updateStatus("moving forward");
-                    else
+                        gridMap.printRobotStatus("moving forward");
+                    } else {
                         updateStatus("Unable to move forward");
+                        gridMap.printRobotStatus("holding position");
+                    }
                     MainActivity.printMessage("w");
                 }
                 else
@@ -172,6 +175,7 @@ public class ControlFragment extends Fragment implements SensorEventListener {
                     gridMap.moveRobot("right");
                     MainActivity.refreshLabel();
                     MainActivity.printMessage("d");
+                    gridMap.printRobotStatus("turning right");
                 }
                 else
                     updateStatus("Please press 'SET STARTPOINT'");
@@ -188,10 +192,13 @@ public class ControlFragment extends Fragment implements SensorEventListener {
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("back");
                     MainActivity.refreshLabel();
-                    if (gridMap.getValidPosition())
+                    if (gridMap.getValidPosition()) {
                         updateStatus("moving backward");
-                    else
+                        gridMap.printRobotStatus("reversing");
+                    } else {
                         updateStatus("Unable to move backward");
+                        gridMap.printRobotStatus("holding position");
+                    }
                     MainActivity.printMessage("s");
                 }
                 else
@@ -211,6 +218,7 @@ public class ControlFragment extends Fragment implements SensorEventListener {
                     MainActivity.refreshLabel();
                     updateStatus("turning left");
                     MainActivity.printMessage("a");
+                    gridMap.printRobotStatus("turning left");
                 }
                 else
                     updateStatus("Please press 'SET STARTPOINT'");

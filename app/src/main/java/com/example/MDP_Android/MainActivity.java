@@ -387,7 +387,10 @@ public class MainActivity extends AppCompatActivity {
             if (gridMap.getAutoUpdate() || MapTabFragment.manualUpdateRequest) {
                 showLog("messageReceiver: update map request");
                 try {
+                    if (message.contains("ROBOT")) message = message.substring(8);
+                    showLog(message);
                     gridMap.setReceivedJsonObject(new JSONObject(message));
+                    showLog(gridMap.getReceivedJsonObject().toString());
                     gridMap.updateMapInformation();
                     MapTabFragment.manualUpdateRequest = false;
                     showLog("messageReceiver: try decode successful");
@@ -417,7 +420,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    //    Override
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
