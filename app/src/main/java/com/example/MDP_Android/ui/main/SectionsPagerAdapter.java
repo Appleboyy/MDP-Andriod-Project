@@ -10,32 +10,30 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.MDP_Android.R;
 
-/**
- * A [FragmentPagerAdapter] that returns a fragment corresponding to
- * one of the sections/tabs/pages.
- */
+// Adapter to control CommsFragment, MapTabFragment & ControlFragment
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
+    //    Initialise variables
     @StringRes
     private static final int[] TAB_TITLES = new int[]{R.string.tab_text_2, R.string.tab_text_3, R.string.tab_text_4};
     private final Context mContext;
 
+    //    Setup page variables
     public SectionsPagerAdapter(Context context, FragmentManager fm) {
         super(fm);
         mContext = context;
     }
 
+    //    Get the fragment to display in positioning
     @Override
     public Fragment getItem(int position) {
-        // getItem is called to instantiate the fragment for the given page.
-        // Return a PlaceholderFragment (defined as a static inner class below).
-        switch(position) {
+        switch (position) {
             case 0:
-                return CommsFragment.newInstance(position +1);
+                return CommsFragment.newInstance(position + 1);
             case 1:
-                return MapTabFragment.newInstance(position+1);
+                return MapTabFragment.newInstance(position + 1);
             case 2:
-                return ControlFragment.newInstance(position+1);
+                return ControlFragment.newInstance(position + 1);
             default:
                 return PlaceholderFragment.newInstance(position + 1);
         }
