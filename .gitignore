@@ -5,3 +5,15 @@ build
 .gradle
 
 local.properties
+
+# Android Studio
+/*/build/
+/*/local.properties
+/*/out
+/*/*/build
+/*/*/production
+captures/
+.navigation/
+*.ipr
+*~
+*.swp
