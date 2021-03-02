@@ -21,7 +21,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.MDP_Android.ui.main.BluetoothConnectionService;
-import com.example.MDP_Android.ui.main.BluetoothPopUp;
+import com.example.MDP_Android.ui.main.BluetoothDeviceConnector;
 import com.example.MDP_Android.ui.main.CommsFragment;
 import com.example.MDP_Android.ui.main.GridMap;
 import com.example.MDP_Android.ui.main.MapInformation;
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         bluetoothButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent popup = new Intent(MainActivity.this, BluetoothPopUp.class);
+                Intent popup = new Intent(MainActivity.this, BluetoothDeviceConnector.class);
                 startActivity(popup);
             }
         });

@@ -728,6 +728,7 @@ public class GridMap extends View {
         BigInteger hexBigIntegerExplored, hexBigIntegerObstacle;
         String message;
         String robotCenter = null;
+        int exploredCount = 9;
 
         if (mapInformation == null)
             return;
@@ -756,14 +757,15 @@ public class GridMap extends View {
                     for (int j = 0; j < (exploredString.length() - 4); j++) {
                         y = 19 - (j /  15);
                         x = 1 + j - ((19 - y) * 15);
-                        if ((String.valueOf(exploredString.charAt(j + 2))).equals("1") && !cells[x][y].type.equals("robot"))
+                        if ((String.valueOf(exploredString.charAt(j + 2))).equals("1") && !cells[x][y].type.equals("robot")) {
                             cells[x][y].setType("explored");
+                            exploredCount++;
+                        }
                         else if ((String.valueOf(exploredString.charAt(j + 2))).equals("0") && !cells[x][y].type.equals("robot"))
                             cells[x][y].setType("unexplored");
                     }
 
 //                    int length = infoJsonObject.getInt("length");
-//
 //                    hexStringObstacle = infoJsonObject.getString("obstacle");
                     hexStringObstacle = mapInformation.getString("obstacle");
                     showLog("updateMapInformation hexStringObstacle: " + hexStringObstacle);
@@ -771,9 +773,13 @@ public class GridMap extends View {
                     hexBigIntegerObstacle = new BigInteger(hexStringObstacle, 16);
                     showLog("updateMapInformation hexBigIntegerObstacle: " + hexBigIntegerObstacle);
                     obstacleString = hexBigIntegerObstacle.toString(2);
+                    showLog("obstacleSTRinHEXx4: " + length);
+                    showLog("obstacleSTRprePad: " + obstacleString.length());
+                    showLog("exploredGrids: " + exploredCount);
                     while (obstacleString.length() < length) {
                         obstacleString = "0" + obstacleString;
                     }
+                    showLog("obstacleSTRpostPad: " + obstacleString.length());
                     showLog("updateMapInformation obstacleString: " + obstacleString);
                     setPublicMDFExploration(hexStringExplored);
                     setPublicMDFObstacle(hexStringObstacle);
