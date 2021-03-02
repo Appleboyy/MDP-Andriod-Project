@@ -39,7 +39,7 @@ public class GridMap extends View {
         initMap();
     }
 
-//     Declare Variables
+    //     Declare Variables
     SharedPreferences sharedPreferences;
 
     private Paint blackPaint = new Paint();
@@ -84,6 +84,7 @@ public class GridMap extends View {
     public static String publicMDFObstacle;
 
 
+    //    Setup page variables
     public GridMap(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initMap();
@@ -257,10 +258,6 @@ public class GridMap extends View {
         return autoUpdate;
     }
 
-    public boolean getMapDrawn() {
-        return mapDrawn;
-    }
-
     private void setValidPosition(boolean status) {
         validPosition = status;
     }
@@ -330,6 +327,7 @@ public class GridMap extends View {
         showLog("Exiting setEndCoord");
     }
 
+    //    Set start position for robot on map [For referencing]
     public void setStartCoord(int col, int row) {
         showLog("Entering setStartCoord");
         startCoord[0] = col;
@@ -347,6 +345,7 @@ public class GridMap extends View {
         return startCoord;
     }
 
+    //    Set current position for robot on map
     public void setCurCoord(int col, int row, String direction) {
         showLog("Entering setCurCoord");
         curCoord[0] = col;
@@ -381,6 +380,7 @@ public class GridMap extends View {
         return cellSize;
     }
 
+    //    Set previous position of robot to state its explored
     private void setOldRobotCoord(int oldCol, int oldRow) {
         showLog("Entering setOldRobotCoord");
         oldCoord[0] = oldCol;
@@ -411,6 +411,7 @@ public class GridMap extends View {
         showLog("Exiting setArrowCoordinate");
     }
 
+    //    Set direction of robot on map
     public void setRobotDirection(String direction) {
         sharedPreferences = getContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -421,6 +422,7 @@ public class GridMap extends View {
         ;
     }
 
+    //    Update x and y coordinates of robot on respective textview
     private void updateRobotAxis(int col, int row, String direction) {
         TextView xAxisTextView = ((Activity) this.getContext()).findViewById(R.id.xAxisTextView);
         TextView yAxisTextView = ((Activity) this.getContext()).findViewById(R.id.yAxisTextView);
@@ -431,6 +433,7 @@ public class GridMap extends View {
         directionAxisTextView.setText(direction);
     }
 
+    //    Set waypoint grid and show on map
     private void setWaypointCoord(int col, int row) throws JSONException {
         showLog("Entering setWaypointCoord");
         waypointCoord[0] = col;
@@ -447,6 +450,7 @@ public class GridMap extends View {
         return waypointCoord;
     }
 
+    //    Set obstacle grid and show on map
     private void setObstacleCoord(int col, int row) {
         showLog("Entering setObstacleCoord");
         int[] obstacleCoord = new int[]{col, row};
@@ -563,6 +567,7 @@ public class GridMap extends View {
         }
     }
 
+    //    When the map is clicked, Set start coordinate, waypoint coordinate, explored and obstacle grids
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         showLog("Entering onTouchEvent");
@@ -590,17 +595,17 @@ public class GridMap extends View {
                     direction = "up";
                 }
                 try {
-                    int directionInt = 0;
+                    String updateDirection = "";
                     if (direction.equals("up")) {
-                        directionInt = 0;
+                        updateDirection = "N";
                     } else if (direction.equals("left")) {
-                        directionInt = 3;
+                        updateDirection = "W";
                     } else if (direction.equals("right")) {
-                        directionInt = 1;
+                        updateDirection = "E";
                     } else if (direction.equals("down")) {
-                        directionInt = 2;
+                        updateDirection = "S";
                     }
-                    MainActivity.printMessage("SP:" + String.valueOf(row - 1) + ":" + String.valueOf(column - 1) + ":" + String.valueOf(directionInt));
+                    MainActivity.printMessage("SP:" + String.valueOf(row - 1) + ":" + String.valueOf(column - 1) + ":" + updateDirection);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -617,6 +622,7 @@ public class GridMap extends View {
                 setWaypointStatus = false;
                 try {
                     this.setWaypointCoord(column, row);
+//                    MainActivity.printMessage("WP:" + String.valueOf(row - 1) + ":" + String.valueOf(column - 1));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -649,6 +655,7 @@ public class GridMap extends View {
         return false;
     }
 
+    //    Toggling to update statuses
     public void toggleCheckedBtn(String buttonName) {
         ToggleButton setStartPointToggleBtn = ((Activity) this.getContext()).findViewById(R.id.setStartPointToggleBtn);
         ToggleButton setWaypointToggleBtn = ((Activity) this.getContext()).findViewById(R.id.setWaypointToggleBtn);
@@ -678,6 +685,7 @@ public class GridMap extends View {
     }
 
 
+    //    Reset map to a blank state
     public void resetMap() {
         showLog("Entering resetMap");
         TextView robotStatusTextView = ((Activity) this.getContext()).findViewById(R.id.robotStatusTextView);
@@ -718,6 +726,7 @@ public class GridMap extends View {
         this.invalidate();
     }
 
+    //    Update map information with respective robot location, explored, unexplored and obstacle grids
     public void updateMapInformation() throws JSONException {
         showLog("Entering updateMapInformation");
         JSONObject mapInformation = this.getReceivedJsonObject();
@@ -755,13 +764,12 @@ public class GridMap extends View {
                     showLog(String.valueOf(exploredString.length()));
                     int x, y;
                     for (int j = 0; j < (exploredString.length() - 4); j++) {
-                        y = 19 - (j /  15);
+                        y = 19 - (j / 15);
                         x = 1 + j - ((19 - y) * 15);
                         if ((String.valueOf(exploredString.charAt(j + 2))).equals("1") && !cells[x][y].type.equals("robot")) {
                             cells[x][y].setType("explored");
                             exploredCount++;
-                        }
-                        else if ((String.valueOf(exploredString.charAt(j + 2))).equals("0") && !cells[x][y].type.equals("robot"))
+                        } else if ((String.valueOf(exploredString.charAt(j + 2))).equals("0") && !cells[x][y].type.equals("robot"))
                             cells[x][y].setType("unexplored");
                     }
 
@@ -907,6 +915,7 @@ public class GridMap extends View {
         this.invalidate();
     }
 
+    //    To move robot in direction given
     public void moveRobot(String direction) {
         showLog("Entering moveRobot");
         setValidPosition(false);
@@ -1026,8 +1035,7 @@ public class GridMap extends View {
                         if (obstacleCoord.get(i)[0] != x || obstacleCoord.get(i)[1] != y) {
                             showLog("obsCo: " + obstacleCoord.get(i)[0] + ", " + obstacleCoord.get(i)[1]);
                             setValidPosition(true);
-                        }
-                        else {
+                        } else {
                             setValidPosition(false);
                             break;
                         }
@@ -1049,6 +1057,7 @@ public class GridMap extends View {
         showLog("Exiting moveRobot");
     }
 
+    //    Create JSON object for map information
     public JSONObject getCreateJsonObject() {
         showLog("Entering getCreateJsonObject");
         String exploredString = "11";
@@ -1192,6 +1201,7 @@ public class GridMap extends View {
         return mapInformation;
     }
 
+    //    Display robot status
     public void printRobotStatus(String message) {
         TextView robotStatusTextView = ((Activity) this.getContext()).findViewById(R.id.robotStatusTextView);
         robotStatusTextView.setText(message);

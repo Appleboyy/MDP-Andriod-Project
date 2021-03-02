@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <View
+        android:id="@+id/view2"
+        android:layout_width="150dp"
+        android:layout_height="2dp"
+        android:layout_marginBottom="110dp"
+        android:background="#c0c0c0"
+        android:maxWidth="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/mapView" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -57,16 +68,65 @@
             android:layout_height="507dp">
 
             <Button
+                android:id="@+id/printMDFString"
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:background="@color/colorAbyss"
+                android:text="Print MDF String"
+                android:textColor="@color/colorWhite"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.48"
+                app:layout_constraintStart_toEndOf="@+id/mapView" />
+
+            <View
+                android:layout_width="150dp"
+                android:layout_height="2dp"
+                android:layout_marginBottom="110dp"
+                android:background="#c0c0c0"
+                android:maxWidth="30dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/mapView" />
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="150dp"
+                android:layout_height="2dp"
+                android:layout_marginBottom="258dp"
+                android:background="#c0c0c0"
+                android:maxWidth="30dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.482"
+                app:layout_constraintStart_toEndOf="@+id/mapView" />
+
+            <View
+                android:id="@+id/view3"
+                android:layout_width="150dp"
+                android:layout_height="2dp"
+                android:layout_marginBottom="320dp"
+                android:background="#c0c0c0"
+                android:maxWidth="30dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.482"
+                app:layout_constraintStart_toEndOf="@+id/mapView" />
+
+            <Button
                 android:id="@+id/f2ActionButton"
                 android:layout_width="85dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
                 android:layout_marginLeft="2dp"
-                android:layout_marginBottom="76dp"
+                android:layout_marginBottom="128dp"
+                android:background="@color/colorAbyss"
                 android:clickable="true"
                 android:contentDescription="F2"
                 android:focusable="true"
                 android:text="F2"
+                android:textColor="@color/colorWhite"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.315"
@@ -80,11 +140,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
-                android:layout_marginBottom="76dp"
+                android:layout_marginBottom="128dp"
+                android:background="@color/colorAbyss"
                 android:clickable="true"
                 android:contentDescription="F1"
                 android:focusable="true"
                 android:text="F1"
+                android:textColor="@color/colorWhite"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/mapView"
                 app:layout_constraintTop_toBottomOf="@+id/configureButton"
@@ -94,13 +156,14 @@
                 android:id="@+id/configureButton"
                 android:layout_width="180dp"
                 android:layout_height="45dp"
-                android:layout_marginBottom="132dp"
+                android:layout_marginBottom="190dp"
+                android:background="@color/colorAbyss"
                 android:text="@string/configure"
+                android:textColor="@color/colorWhite"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.535"
-                app:layout_constraintStart_toEndOf="@+id/mapView"
-                app:layout_constraintTop_toBottomOf="@+id/printMDFString" />
+                app:layout_constraintStart_toEndOf="@+id/mapView" />
 
             <TextView
                 android:id="@+id/robotStatusTextView"
@@ -141,7 +204,7 @@
                 android:id="@+id/yAxisTextView"
                 android:layout_width="45dp"
                 android:layout_height="40dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="24dp"
                 android:text="0"
                 android:textAlignment="center"
                 android:textColor="@color/colorGreen"
@@ -155,33 +218,22 @@
                 android:id="@+id/yLabelTextView"
                 android:layout_width="30dp"
                 android:layout_height="40dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="24dp"
                 android:gravity="center_horizontal"
                 android:text="Y:"
+                android:textColor="@color/colorAbyss"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@+id/xAxisTextView"
                 app:layout_constraintTop_toBottomOf="@+id/directionAxisTextView" />
 
             <TextView
-                android:id="@+id/directionLabelTextView"
-                android:layout_width="111dp"
-                android:layout_height="39dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="20dp"
-                android:gravity="center"
-                android:text="Direction :"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/mapView"
-                app:layout_constraintTop_toBottomOf="@+id/robotStatusTextView" />
-
-            <TextView
                 android:id="@+id/xAxisTextView"
                 android:layout_width="45dp"
                 android:layout_height="40dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="26dp"
                 android:text="0"
                 android:textAlignment="center"
                 android:textColor="@color/colorGreen"
@@ -195,9 +247,10 @@
                 android:layout_height="40dp"
                 android:layout_marginStart="28dp"
                 android:layout_marginLeft="28dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="26dp"
                 android:gravity="center_horizontal"
                 android:text="X:"
+                android:textColor="@color/colorAbyss"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@+id/mapView"
@@ -207,7 +260,7 @@
                 android:id="@+id/directionAxisTextView"
                 android:layout_width="64dp"
                 android:layout_height="40dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="12dp"
                 android:gravity="center"
                 android:text="None"
                 android:textAlignment="center"
@@ -216,6 +269,21 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/directionLabelTextView"
+                app:layout_constraintTop_toBottomOf="@+id/robotStatusTextView" />
+
+            <TextView
+                android:id="@+id/directionLabelTextView"
+                android:layout_width="111dp"
+                android:layout_height="39dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:text="Direction :"
+                android:textColor="@color/colorAbyss"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/mapView"
                 app:layout_constraintTop_toBottomOf="@+id/robotStatusTextView" />
 
             <view
@@ -229,17 +297,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="1.0" />
-
-            <Button
-                android:id="@+id/printMDFString"
-                android:layout_width="180dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Print MDF String"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.522"
-                app:layout_constraintStart_toEndOf="@+id/mapView"
-                app:layout_constraintTop_toBottomOf="@+id/xAxisTextView" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

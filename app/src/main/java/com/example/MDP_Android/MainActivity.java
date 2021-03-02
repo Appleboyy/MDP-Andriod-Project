@@ -223,7 +223,6 @@ public class MainActivity extends AppCompatActivity {
             byte[] bytes = message.getBytes(Charset.defaultCharset());
             BluetoothConnectionService.write(bytes);
         }
-        showLog(message);
         editor.putString("message", CommsFragment.getMessageReceivedTextView().getText() + "\n" + message);
         editor.commit();
         refreshMessageReceived();
@@ -232,17 +231,12 @@ public class MainActivity extends AppCompatActivity {
 
     //        Send x, y coordinate for way point via bluetooth
     public static void printMessage(String name, int x, int y) throws JSONException {
-        showLog("Entering printMessage");
+        showLog("Entering printMessage w coordinates");
         editor = sharedPreferences.edit();
-
-        JSONObject jsonObject = new JSONObject();
         String message;
 
         switch (name) {
             case "waypoint":
-                jsonObject.put(name, name);
-                jsonObject.put("x", x);
-                jsonObject.put("y", y);
                 message = "WP:" + x + ":" + y;
                 break;
             default:
@@ -251,6 +245,7 @@ public class MainActivity extends AppCompatActivity {
         }
         editor.putString("message", CommsFragment.getMessageReceivedTextView().getText() + "\n" + message);
         editor.commit();
+        refreshMessageReceived();
         if (BluetoothConnectionService.BluetoothConnectionStatus == true) {
             byte[] bytes = message.getBytes(Charset.defaultCharset());
             BluetoothConnectionService.write(bytes);

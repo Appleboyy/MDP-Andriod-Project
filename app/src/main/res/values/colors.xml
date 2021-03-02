@@ -3,7 +3,7 @@
     <color name="colorPrimary">#FF8A65</color>
     <color name="colorAccent">#FF5252 </color>
 
-    <color name="border_color">#000000</color>
+    <color name="colorAbyss">#000000</color>
     <color name="colorBlue">#1E88E5</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorGreen">#009688</color>
