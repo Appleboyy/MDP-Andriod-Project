@@ -21,6 +21,7 @@ import com.example.MDP_Android.R;
 
 public class DirectionFragment extends DialogFragment {
 
+    //     Initialise variables
     private static final String TAG = "DirectionFragment";
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
@@ -29,6 +30,7 @@ public class DirectionFragment extends DialogFragment {
     String direction = "";
     View rootView;
 
+    //    Setup page variables to display changes to direction of robot
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -43,19 +45,16 @@ public class DirectionFragment extends DialogFragment {
         saveBtn = rootView.findViewById(R.id.saveBtn);
         cancelDirectionBtn = rootView.findViewById(R.id.cancelDirectionBtn);
 
-        direction = sharedPreferences.getString("direction","");
+        direction = sharedPreferences.getString("direction", "");
 
         if (savedInstanceState != null)
             direction = savedInstanceState.getString("direction");
 
 
         final Spinner spinner = (Spinner) rootView.findViewById(R.id.directionDropdownSpinner);
-        // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.planets_array, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
@@ -63,8 +62,8 @@ public class DirectionFragment extends DialogFragment {
             public void onClick(View view) {
                 showLog("Clicked saveBtn");
                 String direction = spinner.getSelectedItem().toString();
-                editor.putString("direction",direction);
-                ((MainActivity)getActivity()).refreshDirection(direction);
+                editor.putString("direction", direction);
+                ((MainActivity) getActivity()).refreshDirection(direction);
                 Toast.makeText(getActivity(), "Saving direction...", Toast.LENGTH_SHORT).show();
                 showLog("Exiting saveBtn");
                 editor.commit();
@@ -76,7 +75,7 @@ public class DirectionFragment extends DialogFragment {
             @Override
             public void onClick(View view) {
                 showLog("Clicked cancelDirectionBtn");
-                showLog( "Exiting cancelDirectionBtn");
+                showLog("Exiting cancelDirectionBtn");
                 getDialog().dismiss();
             }
         });

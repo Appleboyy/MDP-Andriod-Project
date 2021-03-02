@@ -15,9 +15,11 @@ import com.example.MDP_Android.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+// Simplified and clear map information page
 public class MapInformation extends AppCompatActivity {
-    private final static String TAG = "MapInformation";
 
+    //    Initialise variables
+    private final static String TAG = "MapInformation";
     String mapString;
     String connStatus;
     JSONObject mapJsonObject;
@@ -25,6 +27,7 @@ public class MapInformation extends AppCompatActivity {
     Button obstacleBtn;
     SharedPreferences sharedPreferences;
 
+    //    Setup page variables
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         showLog("Entering onCreateView");
@@ -59,8 +62,7 @@ public class MapInformation extends AppCompatActivity {
                     gridView.plotObstacle = true;
                     Toast.makeText(getApplicationContext(), "Showing obstacle cells", Toast.LENGTH_SHORT).show();
                     gridView.invalidate();
-                }
-                else if (obstacleBtn.getText().equals("Show Obstacle")) {
+                } else if (obstacleBtn.getText().equals("Show Obstacle")) {
                     gridView.plotObstacle = false;
                     Toast.makeText(getApplicationContext(), "Showing explored cells", Toast.LENGTH_SHORT).show();
                     gridView.invalidate();

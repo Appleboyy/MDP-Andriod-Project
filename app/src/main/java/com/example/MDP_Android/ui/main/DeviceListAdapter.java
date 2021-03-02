@@ -15,10 +15,12 @@ import java.util.ArrayList;
 
 public class DeviceListAdapter extends ArrayAdapter<BluetoothDevice> {
 
+    // Initialise variables
     private LayoutInflater mLayoutInflater;
     private ArrayList<BluetoothDevice> myDevices;
     private int mViewResourceId;
 
+    //    Setup page variables
     public DeviceListAdapter(Context context, int tvResourceId, ArrayList<BluetoothDevice> devices) {
         super(context, tvResourceId, devices);
         this.myDevices = devices;
@@ -26,6 +28,7 @@ public class DeviceListAdapter extends ArrayAdapter<BluetoothDevice> {
         mViewResourceId = tvResourceId;
     }
 
+    //    Bluetooth devices information
     public View getView(int position, View convertView, ViewGroup parent) {
         Log.d("DeviceListAdapter", "Getting View");
         convertView = mLayoutInflater.inflate(mViewResourceId, null);
