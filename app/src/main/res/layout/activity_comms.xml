@@ -39,11 +39,11 @@
         android:id="@+id/messageReceivedTitleTextView"
         android:layout_width="fill_parent"
         android:layout_height="30dp"
-        android:background="@drawable/border_black_background"
+        android:background="@drawable/border_red_background"
         android:gravity="center"
         android:text="Message"
         android:textAlignment="center"
-        android:textColor="@color/colorWhite"
+        android:textColor="@color/colorBlack"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -59,7 +59,7 @@
         android:layout_marginRight="4dp"
         android:foreground="@drawable/ic_send"
         android:foregroundGravity="center"
-        app:backgroundTint="#0288D1"
+        app:backgroundTint="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/messageReceivedTextView"></com.google.android.material.floatingactionbutton.FloatingActionButton>
 
