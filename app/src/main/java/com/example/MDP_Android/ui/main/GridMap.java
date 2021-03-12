@@ -31,6 +31,8 @@ import org.json.JSONObject;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class GridMap extends View {
 
@@ -738,6 +740,7 @@ public class GridMap extends View {
         String message;
         String robotCenter = null;
         int exploredCount = 9;
+        List<Integer> roboCenterlist = new ArrayList<Integer>();
 
         if (mapInformation == null)
             return;
@@ -839,9 +842,16 @@ public class GridMap extends View {
                     if (canDrawRobot)
                         this.setOldRobotCoord(curCoord[0], curCoord[1]);
                     robotCenter = mapInformation.getString("robotCenter");
-                    showLog("roboCenter: " + robotCenter.toString());
+                    showLog("roboCenter: " + robotCenter);
+                    String[] splitRobotCenter = robotCenter.replace(" ", "").split(",|\\(|\\)");
+                    showLog("splits: " + splitRobotCenter[0] + ", " + splitRobotCenter[1]);
 
-                    this.setStartCoord(Integer.parseInt(String.valueOf(robotCenter.charAt(1))), Integer.parseInt(String.valueOf(robotCenter.charAt(4))));
+                    roboCenterlist = new ArrayList<Integer>();
+                    Matcher roboCenterMatcher = Pattern.compile("\\d+").matcher(robotCenter);
+                    while(roboCenterMatcher.find()) {
+                        roboCenterlist.add(Integer.parseInt(roboCenterMatcher.group()));
+                    }
+                    this.setStartCoord(Integer.parseInt(String.valueOf(roboCenterlist.get(0))), Integer.parseInt(String.valueOf(roboCenterlist.get(1))));
                     canDrawRobot = true;
                     break;
                 case "heading":
@@ -860,7 +870,12 @@ public class GridMap extends View {
                         roboHead = "up";
                     }
                     showLog("roboHead: " + roboHead);
-                    this.setCurCoord(Integer.parseInt(String.valueOf(robotCenter.charAt(1))) + 1, Integer.parseInt(String.valueOf(robotCenter.charAt(4))) + 1, roboHead);
+//                    Matcher roboHeadMatcher = Pattern.compile("\\d+").matcher(roboHead);
+//                    List<Integer>roboHeadList = new ArrayList<Integer>();
+//                    while(roboHeadMatcher.find()) {
+//                        roboHeadList.add(Integer.parseInt(roboHeadMatcher.group()));
+//                    }
+                    this.setCurCoord(Integer.parseInt(String.valueOf(roboCenterlist.get(0))) + 1, Integer.parseInt(String.valueOf(roboCenterlist.get(1))) + 1, roboHead);
                     canDrawRobot = true;
                     break;
                 case "waypoint":
