@@ -39,6 +39,7 @@ import org.json.JSONObject;
 
 import java.math.BigInteger;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
@@ -93,6 +94,19 @@ public class MainActivity extends AppCompatActivity {
                 editor.commit();
                 refreshMessageReceived();
                 message = "Obstacle : " + GridMap.getPublicMDFObstacle() + "0";
+                editor.putString("message", CommsFragment.getMessageReceivedTextView().getText() + "\n" + message);
+                editor.commit();
+                refreshMessageReceived();
+            }
+        });
+
+//       Initialise Button to print Image String of present map
+        Button printImageStringButton = (Button) findViewById(R.id.printImageString);
+        printImageStringButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String message = "Images Captured: " + GridMap.getPublicImagesString().toString();
+                editor = sharedPreferences.edit();
                 editor.putString("message", CommsFragment.getMessageReceivedTextView().getText() + "\n" + message);
                 editor.commit();
                 refreshMessageReceived();
@@ -381,13 +395,14 @@ public class MainActivity extends AppCompatActivity {
             }
 
 //            Decode image id sent from rPI
-            for(int i=0; i< messageSplit.length; i++) {
+            for (int i = 0; i < messageSplit.length; i++) {
                 showLog("Image Tests: " + messageSplit[i]);
             }
             try {
                 if (messageSplit[1].equals("image")) {
                     gridMap.drawImageNumberCell(Integer.parseInt(messageSplit[3]), Integer.parseInt(messageSplit[5]), Integer.parseInt(messageSplit[7]));
                     showLog("Image Added for index: " + Integer.parseInt(messageSplit[3]) + "," + Integer.parseInt(messageSplit[5]));
+                    gridMap.publicImagesString.add("{" + messageSplit[7] + "," + messageSplit[3] + "," + messageSplit[5] + "}");
                 }
             } catch (Exception e) {
                 showLog("Adding Image Failed");

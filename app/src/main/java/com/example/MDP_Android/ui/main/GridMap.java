@@ -84,6 +84,7 @@ public class GridMap extends View {
     private boolean mapDrawn = false;
     public static String publicMDFExploration;
     public static String publicMDFObstacle;
+    public static ArrayList<String> publicImagesString = new ArrayList<>();
 
 
     //    Setup page variables
@@ -722,6 +723,7 @@ public class GridMap extends View {
         mapDrawn = false;
         canDrawRobot = false;
         validPosition = false;
+        publicImagesString = new ArrayList<>();
         Bitmap arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_error);
 
         showLog("Exiting resetMap");
@@ -1230,12 +1232,13 @@ public class GridMap extends View {
         publicMDFObstacle = msg;
     }
 
-    public static String getPublicMDFExploration() {
-        return publicMDFExploration;
-    }
+    public static String getPublicMDFExploration() { return publicMDFExploration; }
 
     public static String getPublicMDFObstacle() {
         return publicMDFObstacle;
     }
 
+    public static void addPublicImageString(String str) { publicImagesString.add(str); }
+
+    public static ArrayList<String> getPublicImagesString() { return publicImagesString; };
 }
