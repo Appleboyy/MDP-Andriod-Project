@@ -406,8 +406,6 @@ public class BluetoothDeviceConnector extends AppCompatActivity {
                 Log.d(TAG, "mBroadcastReceiver5: Disconnected from " + mDevice.getName());
                 Toast.makeText(BluetoothDeviceConnector.this, "Disconnected from " + mDevice.getName(), Toast.LENGTH_LONG).show();
                 mBluetoothConnection = new BluetoothConnectionService(BluetoothDeviceConnector.this);
-//                mBluetoothConnection.startAcceptThread();
-
 
                 sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
                 editor = sharedPreferences.edit();

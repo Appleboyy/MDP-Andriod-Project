@@ -36,7 +36,6 @@
             </intent-filter>
         </activity>
         <activity android:name="com.example.MDP_Android.ui.main.BluetoothDeviceConnector"></activity>
-        <activity android:name="com.example.MDP_Android.ui.main.MapInformation" />
     </application>
 
 </manifest>

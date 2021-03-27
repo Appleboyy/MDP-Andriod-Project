@@ -53,14 +53,6 @@
                 android:backgroundTint="@color/colorBlue"
                 android:foreground="@drawable/ic_outline_bluetooth_24" />
 
-            <Button
-                android:id="@+id/mapInfoButton"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_marginLeft="10dp"
-                android:foreground="@android:drawable/ic_menu_mapmode"
-                android:textStyle="bold" />
-
         </androidx.appcompat.widget.Toolbar>
 
         <androidx.constraintlayout.widget.ConstraintLayout

@@ -27,7 +27,6 @@ import com.example.MDP_Android.ui.main.BluetoothConnectionService;
 import com.example.MDP_Android.ui.main.BluetoothDeviceConnector;
 import com.example.MDP_Android.ui.main.CommsFragment;
 import com.example.MDP_Android.ui.main.GridMap;
-import com.example.MDP_Android.ui.main.MapInformation;
 import com.example.MDP_Android.ui.main.MapTabFragment;
 import com.example.MDP_Android.ui.main.ReconfigureFragment;
 import com.example.MDP_Android.ui.main.SectionsPagerAdapter;
@@ -39,7 +38,6 @@ import org.json.JSONObject;
 
 import java.math.BigInteger;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
@@ -119,18 +117,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent popup = new Intent(MainActivity.this, BluetoothDeviceConnector.class);
-                startActivity(popup);
-            }
-        });
-
-//       [CHECK]
-        Button mapInformationButton = (Button) findViewById(R.id.mapInfoButton);
-        mapInformationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editor.putString("mapJsonObject", String.valueOf(gridMap.getCreateJsonObject()));
-                editor.commit();
-                Intent popup = new Intent(MainActivity.this, MapInformation.class);
                 startActivity(popup);
             }
         });

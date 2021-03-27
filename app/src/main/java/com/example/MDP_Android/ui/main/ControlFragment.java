@@ -267,13 +267,10 @@ public class ControlFragment extends Fragment implements SensorEventListener {
                 if (imageToggleBtn.getText().equals("IMAGE")) {
                     showToast("Fastest timer stop!");
                     robotStatusTextView.setText("Image Recognition Stopped");
-//                    timerHandler.removeCallbacks(timerRunnableFastest);
                 } else if (imageToggleBtn.getText().equals("STOP")) {
                     showToast("Image recognition start!");
                     MainActivity.printMessage("IR_START");
                     robotStatusTextView.setText("Image Recognition Started");
-//                    fastestTimer = System.currentTimeMillis();
-//                    timerHandler.postDelayed(timerRunnableFastest, 0);
                 } else
                     showToast(imageToggleBtn.getText().toString());
                 showLog("Exiting imageToggleBtn");
