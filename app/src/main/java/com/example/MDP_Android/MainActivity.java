@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +31,7 @@ import com.example.MDP_Android.ui.main.GridMap;
 import com.example.MDP_Android.ui.main.MapTabFragment;
 import com.example.MDP_Android.ui.main.ReconfigureFragment;
 import com.example.MDP_Android.ui.main.SectionsPagerAdapter;
+import com.example.MDP_Android.ui.main.OnSwipeTouchListener;
 import com.google.android.material.tabs.TabLayout;
 
 import org.json.JSONArray;
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static GridMap gridMap;
     static TextView xAxisTextView, yAxisTextView, directionAxisTextView, robotStatusTextView;
+    static ImageView swipeGestureView;
     static Button f1, f2;
     Button reconfigure;
     ReconfigureFragment reconfigureFragment = new ReconfigureFragment();
@@ -126,12 +129,13 @@ public class MainActivity extends AppCompatActivity {
         gridMap = new GridMap(this);
         gridMap = findViewById(R.id.mapView);
 //        Initialise TextView to show X & Y axis
-        xAxisTextView = findViewById(R.id.xAxisTextView);
-        yAxisTextView = findViewById(R.id.yAxisTextView);
+//        xAxisTextView = findViewById(R.id.xAxisTextView);
+//        yAxisTextView = findViewById(R.id.yAxisTextView);
 //        Initialise TextView to show Direction
-        directionAxisTextView = findViewById(R.id.directionAxisTextView);
+//        directionAxisTextView = findViewById(R.id.directionAxisTextView);
 //        Initialise TextView to show RobotStatus
         robotStatusTextView = findViewById(R.id.robotStatusTextView);
+        swipeGestureView = findViewById(R.id.swipeGestureView);
 
 //        Initialise ProgressDialog for possible Bluetooth reconnection
         myDialog = new ProgressDialog(MainActivity.this);
@@ -192,6 +196,50 @@ public class MainActivity extends AppCompatActivity {
                 showLog("Clicked reconfigureBtn");
                 reconfigureFragment.show(getFragmentManager(), "Reconfigure Fragment");
                 showLog("Exiting reconfigureBtn");
+            }
+        });
+
+        swipeGestureView.setOnTouchListener(new OnSwipeTouchListener(context) {
+            public void onSwipeTop() {
+                if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
+                    gridMap.moveRobot("forward");
+//                    MainActivity.refreshLabel();
+                    if (gridMap.getValidPosition()) {
+                        gridMap.printRobotStatus("moving forward");
+                    } else {
+                        gridMap.printRobotStatus("holding position");
+                    }
+                    MainActivity.printMessage("w");
+                }
+//                Toast.makeText(context, "top", Toast.LENGTH_SHORT).show();
+            };
+            public void onSwipeRight() {
+                if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
+                    gridMap.moveRobot("right");
+                    MainActivity.printMessage("d");
+                    gridMap.printRobotStatus("turning right");
+                }
+//                Toast.makeText(context, "right", Toast.LENGTH_SHORT).show();
+            }
+            public void onSwipeLeft() {
+                if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
+                    gridMap.moveRobot("left");
+                    MainActivity.printMessage("a");
+                    gridMap.printRobotStatus("turning left");
+                }
+//                Toast.makeText(context, "left", Toast.LENGTH_SHORT).show();
+            }
+            public void onSwipeBottom() {
+                if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
+                    gridMap.moveRobot("back");
+                    if (gridMap.getValidPosition()) {
+                        gridMap.printRobotStatus("reversing");
+                    } else {
+                        gridMap.printRobotStatus("holding position");
+                    }
+                    MainActivity.printMessage("TAKE");
+                }
+//                Toast.makeText(context, "bottom", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -278,11 +326,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //        Update X & Y axis label
-    public static void refreshLabel() {
-        xAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[0] - 1));
-        yAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[1] - 1));
-        directionAxisTextView.setText(sharedPreferences.getString("direction", ""));
-    }
+//    public static void refreshLabel() {
+//        xAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[0] - 1));
+//        yAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[1] - 1));
+//        directionAxisTextView.setText(sharedPreferences.getString("direction", ""));
+//    }
 
     //        Update received messages to communication box
     public static void receiveMessage(String message) {

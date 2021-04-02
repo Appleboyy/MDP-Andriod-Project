@@ -47,6 +47,8 @@ public class GridMap extends View {
     private Paint blackPaint = new Paint();
     private Paint obstacleColor = new Paint();
     private Paint robotColor = new Paint();
+    private Paint robotBase = new Paint();
+    private Paint robotHead = new Paint();
     private Paint endColor = new Paint();
     private Paint startColor = new Paint();
     private Paint waypointColor = new Paint();
@@ -93,7 +95,10 @@ public class GridMap extends View {
         initMap();
         blackPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         obstacleColor.setColor(Color.BLACK);
-        robotColor.setColor(Color.GREEN);
+        robotColor.setColor(Color.BLACK);
+        robotBase.setColor(Color.GREEN);
+        robotBase.setStyle(Paint.Style.STROKE);
+        robotHead.setColor(Color.RED);
         endColor.setColor(Color.RED);
         startColor.setColor(Color.CYAN);
         waypointColor.setColor(Color.YELLOW);
@@ -180,15 +185,15 @@ public class GridMap extends View {
         showLog("Entering drawGridNumber");
         for (int x = 1; x <= COL; x++) {
             if (x > 9)
-                canvas.drawText(Integer.toString(x - 1), cells[x][20].startX + (cellSize / 5), cells[x][20].startY + (cellSize / 3), blackPaint);
+                canvas.drawText(Integer.toString(x - 1), cells[x][20].startX + (cellSize / 5), cells[x][20].startY + (cellSize / 1.75f), blackPaint);
             else
-                canvas.drawText(Integer.toString(x - 1), cells[x][20].startX + (cellSize / 3), cells[x][20].startY + (cellSize / 3), blackPaint);
+                canvas.drawText(Integer.toString(x - 1), cells[x][20].startX + (cellSize / 3), cells[x][20].startY + (cellSize / 1.75f), blackPaint);
         }
         for (int y = 0; y < ROW; y++) {
-            if ((20 - y) > 9)
-                canvas.drawText(Integer.toString(19 - y), cells[0][y].startX + (cellSize / 2), cells[0][y].startY + (cellSize / 1.5f), blackPaint);
+            if ((20 - y) > 10)
+                canvas.drawText(Integer.toString(19 - y), cells[0][y].startX + (cellSize / 4f), cells[0][y].startY + (cellSize / 1.5f), blackPaint);
             else
-                canvas.drawText(Integer.toString(19 - y), cells[0][y].startX + (cellSize / 1.5f), cells[0][y].startY + (cellSize / 1.5f), blackPaint);
+                canvas.drawText(Integer.toString(19 - y), cells[0][y].startX + (cellSize / 3f), cells[0][y].startY + (cellSize / 1.5f), blackPaint);
         }
         showLog("Exiting drawGridNumber");
     }
@@ -197,26 +202,45 @@ public class GridMap extends View {
         showLog("Entering drawRobot");
         int androidRowCoord = this.convertRow(curCoord[1]);
         for (int y = androidRowCoord; y <= androidRowCoord + 1; y++)
-            canvas.drawLine(cells[curCoord[0] - 1][y].startX, cells[curCoord[0] - 1][y].startY - (cellSize / 30), cells[curCoord[0] + 1][y].endX, cells[curCoord[0] + 1][y].startY - (cellSize / 30), robotColor);
+            canvas.drawLine(cells[curCoord[0] - 1][y].startX, cells[curCoord[0] - 1][y].startY - (cellSize / 30), cells[curCoord[0] + 1][y].endX, cells[curCoord[0] + 1][y].startY - (cellSize / 30), robotBase);
         for (int x = curCoord[0] - 1; x < curCoord[0] + 1; x++)
-            canvas.drawLine(cells[x][androidRowCoord - 1].startX - (cellSize / 30) + cellSize, cells[x][androidRowCoord - 1].startY, cells[x][androidRowCoord + 1].startX - (cellSize / 30) + cellSize, cells[x][androidRowCoord + 1].endY, robotColor);
+            canvas.drawLine(cells[x][androidRowCoord - 1].startX - (cellSize / 30) + cellSize, cells[x][androidRowCoord - 1].startY, cells[x][androidRowCoord + 1].startX - (cellSize / 30) + cellSize, cells[x][androidRowCoord + 1].endY, robotBase);
+
+        float robotHeadcx = (cells[curCoord[0]][androidRowCoord - 1].startX + cells[curCoord[0]][androidRowCoord - 1].endX) / 2;
+        float robotHeadcy = ((cells[curCoord[0]][androidRowCoord].startY + cells[curCoord[0]][androidRowCoord].endY) / 2) - 25;
+        float robotBodycx = (cells[curCoord[0]][androidRowCoord - 1].startX + cells[curCoord[0]][androidRowCoord - 1].endX) / 2;
+        float robotBodycy = (cells[curCoord[0]][androidRowCoord].startY + cells[curCoord[0]][androidRowCoord].endY) / 2;
+        canvas.drawCircle(robotBodycx, robotBodycy, 30, robotColor);
+//        canvas.drawCircle(robotHeadcx, robotHeadcy, 5, robotHead);
 
         switch (this.getRobotDirection()) {
             case "up":
-                canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord + 1].startX, cells[curCoord[0] - 1][androidRowCoord + 1].endY, (cells[curCoord[0]][androidRowCoord - 1].startX + cells[curCoord[0]][androidRowCoord - 1].endX) / 2, cells[curCoord[0]][androidRowCoord - 1].startY, blackPaint);
-                canvas.drawLine((cells[curCoord[0]][androidRowCoord - 1].startX + cells[curCoord[0]][androidRowCoord - 1].endX) / 2, cells[curCoord[0]][androidRowCoord - 1].startY, cells[curCoord[0] + 1][androidRowCoord + 1].endX, cells[curCoord[0] + 1][androidRowCoord + 1].endY, blackPaint);
+//                canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord + 1].startX, cells[curCoord[0] - 1][androidRowCoord + 1].endY, (cells[curCoord[0]][androidRowCoord - 1].startX + cells[curCoord[0]][androidRowCoord - 1].endX) / 2, cells[curCoord[0]][androidRowCoord - 1].startY, blackPaint);
+//                canvas.drawLine((cells[curCoord[0]][androidRowCoord - 1].startX + cells[curCoord[0]][androidRowCoord - 1].endX) / 2, cells[curCoord[0]][androidRowCoord - 1].startY, cells[curCoord[0] + 1][androidRowCoord + 1].endX, cells[curCoord[0] + 1][androidRowCoord + 1].endY, blackPaint);
+                robotHeadcx = (cells[curCoord[0]][androidRowCoord - 1].startX + cells[curCoord[0]][androidRowCoord - 1].endX) / 2;
+                robotHeadcy = ((cells[curCoord[0]][androidRowCoord].startY + cells[curCoord[0]][androidRowCoord].endY) / 2) - 27;
+                canvas.drawCircle(robotHeadcx, robotHeadcy, 5, robotHead);
                 break;
             case "down":
-                canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord - 1].startX, cells[curCoord[0] - 1][androidRowCoord - 1].startY, (cells[curCoord[0]][androidRowCoord + 1].startX + cells[curCoord[0]][androidRowCoord + 1].endX) / 2, cells[curCoord[0]][androidRowCoord + 1].endY, blackPaint);
-                canvas.drawLine((cells[curCoord[0]][androidRowCoord + 1].startX + cells[curCoord[0]][androidRowCoord + 1].endX) / 2, cells[curCoord[0]][androidRowCoord + 1].endY, cells[curCoord[0] + 1][androidRowCoord - 1].endX, cells[curCoord[0] + 1][androidRowCoord - 1].startY, blackPaint);
+//                canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord - 1].startX, cells[curCoord[0] - 1][androidRowCoord - 1].startY, (cells[curCoord[0]][androidRowCoord + 1].startX + cells[curCoord[0]][androidRowCoord + 1].endX) / 2, cells[curCoord[0]][androidRowCoord + 1].endY, blackPaint);
+//                canvas.drawLine((cells[curCoord[0]][androidRowCoord + 1].startX + cells[curCoord[0]][androidRowCoord + 1].endX) / 2, cells[curCoord[0]][androidRowCoord + 1].endY, cells[curCoord[0] + 1][androidRowCoord - 1].endX, cells[curCoord[0] + 1][androidRowCoord - 1].startY, blackPaint);
+                robotHeadcx = (cells[curCoord[0]][androidRowCoord + 1].startX + cells[curCoord[0]][androidRowCoord + 1].endX) / 2;
+                robotHeadcy = ((cells[curCoord[0]][androidRowCoord + 1].startY + cells[curCoord[0]][androidRowCoord + 1].startY) / 2) + 15;
+                canvas.drawCircle(robotHeadcx, robotHeadcy, 5, robotHead);
                 break;
             case "right":
-                canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord - 1].startX, cells[curCoord[0] - 1][androidRowCoord - 1].startY, cells[curCoord[0] + 1][androidRowCoord].endX, cells[curCoord[0] + 1][androidRowCoord - 1].endY + (cells[curCoord[0] + 1][androidRowCoord].endY - cells[curCoord[0] + 1][androidRowCoord - 1].endY) / 2, blackPaint);
-                canvas.drawLine(cells[curCoord[0] + 1][androidRowCoord].endX, cells[curCoord[0] + 1][androidRowCoord - 1].endY + (cells[curCoord[0] + 1][androidRowCoord].endY - cells[curCoord[0] + 1][androidRowCoord - 1].endY) / 2, cells[curCoord[0] - 1][androidRowCoord + 1].startX, cells[curCoord[0] - 1][androidRowCoord + 1].endY, blackPaint);
+//                canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord - 1].startX, cells[curCoord[0] - 1][androidRowCoord - 1].startY, cells[curCoord[0] + 1][androidRowCoord].endX, cells[curCoord[0] + 1][androidRowCoord - 1].endY + (cells[curCoord[0] + 1][androidRowCoord].endY - cells[curCoord[0] + 1][androidRowCoord - 1].endY) / 2, blackPaint);
+//                canvas.drawLine(cells[curCoord[0] + 1][androidRowCoord].endX, cells[curCoord[0] + 1][androidRowCoord - 1].endY + (cells[curCoord[0] + 1][androidRowCoord].endY - cells[curCoord[0] + 1][androidRowCoord - 1].endY) / 2, cells[curCoord[0] - 1][androidRowCoord + 1].startX, cells[curCoord[0] - 1][androidRowCoord + 1].endY, blackPaint);
+                robotHeadcx = (cells[curCoord[0] + 1][androidRowCoord - 1].endX + (cells[curCoord[0] + 1][androidRowCoord].endX - cells[curCoord[0] + 1][androidRowCoord - 1].endX) / 2) - 7;
+                robotHeadcy = cells[curCoord[0] + 1][androidRowCoord - 1].endY + (cells[curCoord[0] + 1][androidRowCoord].endY - cells[curCoord[0] + 1][androidRowCoord - 1].endY) / 2;
+                canvas.drawCircle(robotHeadcx, robotHeadcy, 5, robotHead);
                 break;
             case "left":
-                canvas.drawLine(cells[curCoord[0] + 1][androidRowCoord - 1].endX, cells[curCoord[0] + 1][androidRowCoord - 1].startY, cells[curCoord[0] - 1][androidRowCoord].startX, cells[curCoord[0] - 1][androidRowCoord - 1].endY + (cells[curCoord[0] - 1][androidRowCoord].endY - cells[curCoord[0] - 1][androidRowCoord - 1].endY) / 2, blackPaint);
-                canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord].startX, cells[curCoord[0] - 1][androidRowCoord - 1].endY + (cells[curCoord[0] - 1][androidRowCoord].endY - cells[curCoord[0] - 1][androidRowCoord - 1].endY) / 2, cells[curCoord[0] + 1][androidRowCoord + 1].endX, cells[curCoord[0] + 1][androidRowCoord + 1].endY, blackPaint);
+//                canvas.drawLine(cells[curCoord[0] + 1][androidRowCoord - 1].endX, cells[curCoord[0] + 1][androidRowCoord - 1].startY, cells[curCoord[0] - 1][androidRowCoord].startX, cells[curCoord[0] - 1][androidRowCoord - 1].endY + (cells[curCoord[0] - 1][androidRowCoord].endY - cells[curCoord[0] - 1][androidRowCoord - 1].endY) / 2, blackPaint);
+//                canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord].startX, cells[curCoord[0] - 1][androidRowCoord - 1].endY + (cells[curCoord[0] - 1][androidRowCoord].endY - cells[curCoord[0] - 1][androidRowCoord - 1].endY) / 2, cells[curCoord[0] + 1][androidRowCoord + 1].endX, cells[curCoord[0] + 1][androidRowCoord + 1].endY, blackPaint);
+                robotHeadcx = (cells[curCoord[0] - 1][androidRowCoord - 1].endX + (cells[curCoord[0] - 1][androidRowCoord].endX - cells[curCoord[0] - 1][androidRowCoord - 1].endX) / 2) - 15;
+                robotHeadcy = cells[curCoord[0] - 1][androidRowCoord - 1].endY + (cells[curCoord[0] - 1][androidRowCoord].endY - cells[curCoord[0] - 1][androidRowCoord - 1].endY) / 2;
+                canvas.drawCircle(robotHeadcx, robotHeadcy, 5, robotHead);
                 break;
             default:
                 Toast.makeText(this.getContext(), "Error with drawing robot (unknown direction)", Toast.LENGTH_LONG).show();
@@ -354,7 +378,7 @@ public class GridMap extends View {
         curCoord[0] = col;
         curCoord[1] = row;
         this.setRobotDirection(direction);
-        this.updateRobotAxis(col, row, direction);
+//        this.updateRobotAxis(col, row, direction);
 
         row = this.convertRow(row);
         for (int x = col - 1; x <= col + 1; x++)
@@ -426,15 +450,15 @@ public class GridMap extends View {
     }
 
     //    Update x and y coordinates of robot on respective textview
-    private void updateRobotAxis(int col, int row, String direction) {
-        TextView xAxisTextView = ((Activity) this.getContext()).findViewById(R.id.xAxisTextView);
-        TextView yAxisTextView = ((Activity) this.getContext()).findViewById(R.id.yAxisTextView);
-        TextView directionAxisTextView = ((Activity) this.getContext()).findViewById(R.id.directionAxisTextView);
-
-        xAxisTextView.setText(String.valueOf(col - 1));
-        yAxisTextView.setText(String.valueOf(row - 1));
-        directionAxisTextView.setText(direction);
-    }
+//    private void updateRobotAxis(int col, int row, String direction) {
+//        TextView xAxisTextView = ((Activity) this.getContext()).findViewById(R.id.xAxisTextView);
+//        TextView yAxisTextView = ((Activity) this.getContext()).findViewById(R.id.yAxisTextView);
+//        TextView directionAxisTextView = ((Activity) this.getContext()).findViewById(R.id.directionAxisTextView);
+//
+//        xAxisTextView.setText(String.valueOf(col - 1));
+//        yAxisTextView.setText(String.valueOf(row - 1));
+//        directionAxisTextView.setText(direction);
+//    }
 
     //    Set waypoint grid and show on map
     private void setWaypointCoord(int col, int row) throws JSONException {
@@ -530,7 +554,7 @@ public class GridMap extends View {
                     this.paint = obstacleColor;
                     break;
                 case "robot":
-                    this.paint = robotColor;
+                    this.paint = robotBase;
                     break;
                 case "end":
                     this.paint = endColor;
@@ -612,7 +636,7 @@ public class GridMap extends View {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                updateRobotAxis(column, row, direction);
+//                updateRobotAxis(column, row, direction);
                 if (setStartPointToggleBtn.isChecked())
                     setStartPointToggleBtn.toggle();
                 this.invalidate();
@@ -693,7 +717,7 @@ public class GridMap extends View {
         TextView robotStatusTextView = ((Activity) this.getContext()).findViewById(R.id.robotStatusTextView);
         Switch manualAutoToggleBtn = ((Activity) this.getContext()).findViewById(R.id.manualAutoToggleBtn);
         Switch phoneTiltSwitch = ((Activity) this.getContext()).findViewById(R.id.phoneTiltSwitch);
-        updateRobotAxis(1, 1, "None");
+//        updateRobotAxis(1, 1, "None");
         robotStatusTextView.setText("Not Available");
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
