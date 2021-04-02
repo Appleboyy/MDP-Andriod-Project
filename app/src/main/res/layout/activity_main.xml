@@ -208,19 +208,20 @@
                 android:layout_marginTop="30dp"
                 android:layout_marginEnd="13dp"
                 android:layout_marginRight="13dp"
+                android:background="#FFFFFF"
                 app:layout_constraintBottom_toBottomOf="@+id/view"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/robotStatusTextView"
                 app:layout_constraintVertical_bias="0.0"
-                app:srcCompat="@drawable/ic_launcher_background" />
+                app:srcCompat="@drawable/swipe_bg" />
 
             <TextView
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:layout_marginEnd="60dp"
-                android:layout_marginRight="60dp"
+                android:layout_marginEnd="64dp"
+                android:layout_marginRight="64dp"
                 android:text="Swipe Panel "
                 android:textColor="@color/colorGreen"
                 app:layout_constraintBottom_toTopOf="@+id/swipeGestureView"
