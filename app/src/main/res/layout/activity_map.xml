@@ -92,9 +92,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="12dp"
-        android:layout_marginRight="12dp"
+        android:layout_marginTop="4dp"
         android:background="@color/colorAbyss"
         android:padding="10sp"
         android:textAlignment="center"
@@ -103,7 +101,7 @@
         android:textOn="CANCEL"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.962"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/resetMapBtn" />
 
@@ -115,15 +113,15 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="28dp"
         android:background="@color/colorAbyss"
+        android:padding="10sp"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textOff="SET WAYPOINT"
         android:textOn="CANCEL"
         android:textSize="18sp"
-        android:padding="10sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.982"
+        app:layout_constraintHorizontal_bias="0.964"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/setStartPointToggleBtn"
         app:layout_constraintVertical_bias="0.0" />
@@ -135,12 +133,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:background="@color/colorAbyss"
+        android:padding="10sp"
         android:text="RESET MAP"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
-        android:padding="10sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.985"
+        app:layout_constraintHorizontal_bias="0.966"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -161,5 +159,19 @@
         app:layout_constraintHorizontal_bias="0.04"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/manualAutoToggleBtn" />
+
+    <ImageButton
+        android:id="@+id/mapCaptureBtn"
+        android:layout_width="151dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginLeft="36dp"
+        android:layout_marginTop="12dp"
+        android:background="@android:drawable/btn_default"
+        android:scaleType="centerInside"
+        android:tint="@color/colorAbyss"
+        app:layout_constraintStart_toEndOf="@+id/updateButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_camera_24" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

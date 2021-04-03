@@ -1,7 +1,13 @@
 package com.example.MDP_Android.ui.main;
 
+import android.content.ActivityNotFoundException;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.hardware.Camera;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +37,7 @@ public class MapTabFragment extends Fragment {
     private PageViewModel pageViewModel;
 
     Button resetMapBtn, updateButton;
-    ImageButton directionChangeImageBtn, exploredImageBtn, obstacleImageBtn, clearImageBtn;
+    ImageButton directionChangeImageBtn, exploredImageBtn, obstacleImageBtn, clearImageBtn, mapCaptureBtn;
     ToggleButton setStartPointToggleBtn, setWaypointToggleBtn;
     Switch manualAutoToggleBtn;
     GridMap gridMap;
@@ -74,8 +80,18 @@ public class MapTabFragment extends Fragment {
         exploredImageBtn = root.findViewById(R.id.exploredImageBtn);
         obstacleImageBtn = root.findViewById(R.id.obstacleImageBtn);
         clearImageBtn = root.findViewById(R.id.clearImageBtn);
+        mapCaptureBtn = root.findViewById(R.id.mapCaptureBtn);
         manualAutoToggleBtn = root.findViewById(R.id.manualAutoToggleBtn);
         updateButton = root.findViewById(R.id.updateButton);
+
+        mapCaptureBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showLog("Clicked resetMapBtn");
+                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivity(intent);
+            }
+        });
 
         resetMapBtn.setOnClickListener(new View.OnClickListener() {
             @Override
