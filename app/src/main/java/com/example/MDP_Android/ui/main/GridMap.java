@@ -31,6 +31,8 @@ import org.json.JSONObject;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class GridMap extends View {
 
@@ -39,11 +41,14 @@ public class GridMap extends View {
         initMap();
     }
 
+    //     Declare Variables
     SharedPreferences sharedPreferences;
 
     private Paint blackPaint = new Paint();
     private Paint obstacleColor = new Paint();
     private Paint robotColor = new Paint();
+    private Paint robotBase = new Paint();
+    private Paint robotHead = new Paint();
     private Paint endColor = new Paint();
     private Paint startColor = new Paint();
     private Paint waypointColor = new Paint();
@@ -81,14 +86,19 @@ public class GridMap extends View {
     private boolean mapDrawn = false;
     public static String publicMDFExploration;
     public static String publicMDFObstacle;
+    public static ArrayList<String> publicImagesString = new ArrayList<>();
 
 
+    //    Setup page variables
     public GridMap(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initMap();
         blackPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         obstacleColor.setColor(Color.BLACK);
-        robotColor.setColor(Color.GREEN);
+        robotColor.setColor(Color.BLACK);
+        robotBase.setColor(Color.GREEN);
+        robotBase.setStyle(Paint.Style.STROKE);
+        robotHead.setColor(Color.RED);
         endColor.setColor(Color.RED);
         startColor.setColor(Color.CYAN);
         waypointColor.setColor(Color.YELLOW);
@@ -97,7 +107,7 @@ public class GridMap extends View {
         arrowColor.setColor(Color.BLACK);
         fastestPathColor.setColor(Color.MAGENTA);
 
-        // get shared preferences
+        // Get shared preferences
         sharedPreferences = getContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
     }
 
@@ -111,7 +121,7 @@ public class GridMap extends View {
         super.onDraw(canvas);
         showLog("Redrawing map");
 
-        //CREATE CELL COORDINATES
+        //Create cell coordinates
         Log.d(TAG, "Creating Cell");
 
         if (!mapDrawn) {
@@ -175,15 +185,15 @@ public class GridMap extends View {
         showLog("Entering drawGridNumber");
         for (int x = 1; x <= COL; x++) {
             if (x > 9)
-                canvas.drawText(Integer.toString(x - 1), cells[x][20].startX + (cellSize / 5), cells[x][20].startY + (cellSize / 3), blackPaint);
+                canvas.drawText(Integer.toString(x - 1), cells[x][20].startX + (cellSize / 5), cells[x][20].startY + (cellSize / 1.75f), blackPaint);
             else
-                canvas.drawText(Integer.toString(x - 1), cells[x][20].startX + (cellSize / 3), cells[x][20].startY + (cellSize / 3), blackPaint);
+                canvas.drawText(Integer.toString(x - 1), cells[x][20].startX + (cellSize / 3), cells[x][20].startY + (cellSize / 1.75f), blackPaint);
         }
         for (int y = 0; y < ROW; y++) {
-            if ((20 - y) > 9)
-                canvas.drawText(Integer.toString(19 - y), cells[0][y].startX + (cellSize / 2), cells[0][y].startY + (cellSize / 1.5f), blackPaint);
+            if ((20 - y) > 10)
+                canvas.drawText(Integer.toString(19 - y), cells[0][y].startX + (cellSize / 4f), cells[0][y].startY + (cellSize / 1.5f), blackPaint);
             else
-                canvas.drawText(Integer.toString(19 - y), cells[0][y].startX + (cellSize / 1.5f), cells[0][y].startY + (cellSize / 1.5f), blackPaint);
+                canvas.drawText(Integer.toString(19 - y), cells[0][y].startX + (cellSize / 3f), cells[0][y].startY + (cellSize / 1.5f), blackPaint);
         }
         showLog("Exiting drawGridNumber");
     }
@@ -192,26 +202,45 @@ public class GridMap extends View {
         showLog("Entering drawRobot");
         int androidRowCoord = this.convertRow(curCoord[1]);
         for (int y = androidRowCoord; y <= androidRowCoord + 1; y++)
-            canvas.drawLine(cells[curCoord[0] - 1][y].startX, cells[curCoord[0] - 1][y].startY - (cellSize / 30), cells[curCoord[0] + 1][y].endX, cells[curCoord[0] + 1][y].startY - (cellSize / 30), robotColor);
+            canvas.drawLine(cells[curCoord[0] - 1][y].startX, cells[curCoord[0] - 1][y].startY - (cellSize / 30), cells[curCoord[0] + 1][y].endX, cells[curCoord[0] + 1][y].startY - (cellSize / 30), robotBase);
         for (int x = curCoord[0] - 1; x < curCoord[0] + 1; x++)
-            canvas.drawLine(cells[x][androidRowCoord - 1].startX - (cellSize / 30) + cellSize, cells[x][androidRowCoord - 1].startY, cells[x][androidRowCoord + 1].startX - (cellSize / 30) + cellSize, cells[x][androidRowCoord + 1].endY, robotColor);
+            canvas.drawLine(cells[x][androidRowCoord - 1].startX - (cellSize / 30) + cellSize, cells[x][androidRowCoord - 1].startY, cells[x][androidRowCoord + 1].startX - (cellSize / 30) + cellSize, cells[x][androidRowCoord + 1].endY, robotBase);
+
+        float robotHeadcx = (cells[curCoord[0]][androidRowCoord - 1].startX + cells[curCoord[0]][androidRowCoord - 1].endX) / 2;
+        float robotHeadcy = ((cells[curCoord[0]][androidRowCoord].startY + cells[curCoord[0]][androidRowCoord].endY) / 2) - 25;
+        float robotBodycx = (cells[curCoord[0]][androidRowCoord - 1].startX + cells[curCoord[0]][androidRowCoord - 1].endX) / 2;
+        float robotBodycy = (cells[curCoord[0]][androidRowCoord].startY + cells[curCoord[0]][androidRowCoord].endY) / 2;
+        canvas.drawCircle(robotBodycx, robotBodycy, 30, robotColor);
+//        canvas.drawCircle(robotHeadcx, robotHeadcy, 5, robotHead);
 
         switch (this.getRobotDirection()) {
             case "up":
-                canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord + 1].startX, cells[curCoord[0] - 1][androidRowCoord + 1].endY, (cells[curCoord[0]][androidRowCoord - 1].startX + cells[curCoord[0]][androidRowCoord - 1].endX) / 2, cells[curCoord[0]][androidRowCoord - 1].startY, blackPaint);
-                canvas.drawLine((cells[curCoord[0]][androidRowCoord - 1].startX + cells[curCoord[0]][androidRowCoord - 1].endX) / 2, cells[curCoord[0]][androidRowCoord - 1].startY, cells[curCoord[0] + 1][androidRowCoord + 1].endX, cells[curCoord[0] + 1][androidRowCoord + 1].endY, blackPaint);
+//                canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord + 1].startX, cells[curCoord[0] - 1][androidRowCoord + 1].endY, (cells[curCoord[0]][androidRowCoord - 1].startX + cells[curCoord[0]][androidRowCoord - 1].endX) / 2, cells[curCoord[0]][androidRowCoord - 1].startY, blackPaint);
+//                canvas.drawLine((cells[curCoord[0]][androidRowCoord - 1].startX + cells[curCoord[0]][androidRowCoord - 1].endX) / 2, cells[curCoord[0]][androidRowCoord - 1].startY, cells[curCoord[0] + 1][androidRowCoord + 1].endX, cells[curCoord[0] + 1][androidRowCoord + 1].endY, blackPaint);
+                robotHeadcx = (cells[curCoord[0]][androidRowCoord - 1].startX + cells[curCoord[0]][androidRowCoord - 1].endX) / 2;
+                robotHeadcy = ((cells[curCoord[0]][androidRowCoord].startY + cells[curCoord[0]][androidRowCoord].endY) / 2) - 27;
+                canvas.drawCircle(robotHeadcx, robotHeadcy, 5, robotHead);
                 break;
             case "down":
-                canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord - 1].startX, cells[curCoord[0] - 1][androidRowCoord - 1].startY, (cells[curCoord[0]][androidRowCoord + 1].startX + cells[curCoord[0]][androidRowCoord + 1].endX) / 2, cells[curCoord[0]][androidRowCoord + 1].endY, blackPaint);
-                canvas.drawLine((cells[curCoord[0]][androidRowCoord + 1].startX + cells[curCoord[0]][androidRowCoord + 1].endX) / 2, cells[curCoord[0]][androidRowCoord + 1].endY, cells[curCoord[0] + 1][androidRowCoord - 1].endX, cells[curCoord[0] + 1][androidRowCoord - 1].startY, blackPaint);
+//                canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord - 1].startX, cells[curCoord[0] - 1][androidRowCoord - 1].startY, (cells[curCoord[0]][androidRowCoord + 1].startX + cells[curCoord[0]][androidRowCoord + 1].endX) / 2, cells[curCoord[0]][androidRowCoord + 1].endY, blackPaint);
+//                canvas.drawLine((cells[curCoord[0]][androidRowCoord + 1].startX + cells[curCoord[0]][androidRowCoord + 1].endX) / 2, cells[curCoord[0]][androidRowCoord + 1].endY, cells[curCoord[0] + 1][androidRowCoord - 1].endX, cells[curCoord[0] + 1][androidRowCoord - 1].startY, blackPaint);
+                robotHeadcx = (cells[curCoord[0]][androidRowCoord + 1].startX + cells[curCoord[0]][androidRowCoord + 1].endX) / 2;
+                robotHeadcy = ((cells[curCoord[0]][androidRowCoord + 1].startY + cells[curCoord[0]][androidRowCoord + 1].startY) / 2) + 15;
+                canvas.drawCircle(robotHeadcx, robotHeadcy, 5, robotHead);
                 break;
             case "right":
-                canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord - 1].startX, cells[curCoord[0] - 1][androidRowCoord - 1].startY, cells[curCoord[0] + 1][androidRowCoord].endX, cells[curCoord[0] + 1][androidRowCoord - 1].endY + (cells[curCoord[0] + 1][androidRowCoord].endY - cells[curCoord[0] + 1][androidRowCoord - 1].endY) / 2, blackPaint);
-                canvas.drawLine(cells[curCoord[0] + 1][androidRowCoord].endX, cells[curCoord[0] + 1][androidRowCoord - 1].endY + (cells[curCoord[0] + 1][androidRowCoord].endY - cells[curCoord[0] + 1][androidRowCoord - 1].endY) / 2, cells[curCoord[0] - 1][androidRowCoord + 1].startX, cells[curCoord[0] - 1][androidRowCoord + 1].endY, blackPaint);
+//                canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord - 1].startX, cells[curCoord[0] - 1][androidRowCoord - 1].startY, cells[curCoord[0] + 1][androidRowCoord].endX, cells[curCoord[0] + 1][androidRowCoord - 1].endY + (cells[curCoord[0] + 1][androidRowCoord].endY - cells[curCoord[0] + 1][androidRowCoord - 1].endY) / 2, blackPaint);
+//                canvas.drawLine(cells[curCoord[0] + 1][androidRowCoord].endX, cells[curCoord[0] + 1][androidRowCoord - 1].endY + (cells[curCoord[0] + 1][androidRowCoord].endY - cells[curCoord[0] + 1][androidRowCoord - 1].endY) / 2, cells[curCoord[0] - 1][androidRowCoord + 1].startX, cells[curCoord[0] - 1][androidRowCoord + 1].endY, blackPaint);
+                robotHeadcx = (cells[curCoord[0] + 1][androidRowCoord - 1].endX + (cells[curCoord[0] + 1][androidRowCoord].endX - cells[curCoord[0] + 1][androidRowCoord - 1].endX) / 2) - 7;
+                robotHeadcy = cells[curCoord[0] + 1][androidRowCoord - 1].endY + (cells[curCoord[0] + 1][androidRowCoord].endY - cells[curCoord[0] + 1][androidRowCoord - 1].endY) / 2;
+                canvas.drawCircle(robotHeadcx, robotHeadcy, 5, robotHead);
                 break;
             case "left":
-                canvas.drawLine(cells[curCoord[0] + 1][androidRowCoord - 1].endX, cells[curCoord[0] + 1][androidRowCoord - 1].startY, cells[curCoord[0] - 1][androidRowCoord].startX, cells[curCoord[0] - 1][androidRowCoord - 1].endY + (cells[curCoord[0] - 1][androidRowCoord].endY - cells[curCoord[0] - 1][androidRowCoord - 1].endY) / 2, blackPaint);
-                canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord].startX, cells[curCoord[0] - 1][androidRowCoord - 1].endY + (cells[curCoord[0] - 1][androidRowCoord].endY - cells[curCoord[0] - 1][androidRowCoord - 1].endY) / 2, cells[curCoord[0] + 1][androidRowCoord + 1].endX, cells[curCoord[0] + 1][androidRowCoord + 1].endY, blackPaint);
+//                canvas.drawLine(cells[curCoord[0] + 1][androidRowCoord - 1].endX, cells[curCoord[0] + 1][androidRowCoord - 1].startY, cells[curCoord[0] - 1][androidRowCoord].startX, cells[curCoord[0] - 1][androidRowCoord - 1].endY + (cells[curCoord[0] - 1][androidRowCoord].endY - cells[curCoord[0] - 1][androidRowCoord - 1].endY) / 2, blackPaint);
+//                canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord].startX, cells[curCoord[0] - 1][androidRowCoord - 1].endY + (cells[curCoord[0] - 1][androidRowCoord].endY - cells[curCoord[0] - 1][androidRowCoord - 1].endY) / 2, cells[curCoord[0] + 1][androidRowCoord + 1].endX, cells[curCoord[0] + 1][androidRowCoord + 1].endY, blackPaint);
+                robotHeadcx = (cells[curCoord[0] - 1][androidRowCoord - 1].endX + (cells[curCoord[0] - 1][androidRowCoord].endX - cells[curCoord[0] - 1][androidRowCoord - 1].endX) / 2) - 15;
+                robotHeadcy = cells[curCoord[0] - 1][androidRowCoord - 1].endY + (cells[curCoord[0] - 1][androidRowCoord].endY - cells[curCoord[0] - 1][androidRowCoord - 1].endY) / 2;
+                canvas.drawCircle(robotHeadcx, robotHeadcy, 5, robotHead);
                 break;
             default:
                 Toast.makeText(this.getContext(), "Error with drawing robot (unknown direction)", Toast.LENGTH_LONG).show();
@@ -254,10 +283,6 @@ public class GridMap extends View {
 
     public boolean getAutoUpdate() {
         return autoUpdate;
-    }
-
-    public boolean getMapDrawn() {
-        return mapDrawn;
     }
 
     private void setValidPosition(boolean status) {
@@ -329,6 +354,7 @@ public class GridMap extends View {
         showLog("Exiting setEndCoord");
     }
 
+    //    Set start position for robot on map [For referencing]
     public void setStartCoord(int col, int row) {
         showLog("Entering setStartCoord");
         startCoord[0] = col;
@@ -346,12 +372,13 @@ public class GridMap extends View {
         return startCoord;
     }
 
+    //    Set current position for robot on map
     public void setCurCoord(int col, int row, String direction) {
         showLog("Entering setCurCoord");
         curCoord[0] = col;
         curCoord[1] = row;
         this.setRobotDirection(direction);
-        this.updateRobotAxis(col, row, direction);
+//        this.updateRobotAxis(col, row, direction);
 
         row = this.convertRow(row);
         for (int x = col - 1; x <= col + 1; x++)
@@ -380,6 +407,7 @@ public class GridMap extends View {
         return cellSize;
     }
 
+    //    Set previous position of robot to state its explored
     private void setOldRobotCoord(int oldCol, int oldRow) {
         showLog("Entering setOldRobotCoord");
         oldCoord[0] = oldCol;
@@ -410,6 +438,7 @@ public class GridMap extends View {
         showLog("Exiting setArrowCoordinate");
     }
 
+    //    Set direction of robot on map
     public void setRobotDirection(String direction) {
         sharedPreferences = getContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -420,16 +449,18 @@ public class GridMap extends View {
         ;
     }
 
-    private void updateRobotAxis(int col, int row, String direction) {
-        TextView xAxisTextView = ((Activity) this.getContext()).findViewById(R.id.xAxisTextView);
-        TextView yAxisTextView = ((Activity) this.getContext()).findViewById(R.id.yAxisTextView);
-        TextView directionAxisTextView = ((Activity) this.getContext()).findViewById(R.id.directionAxisTextView);
+    //    Update x and y coordinates of robot on respective textview
+//    private void updateRobotAxis(int col, int row, String direction) {
+//        TextView xAxisTextView = ((Activity) this.getContext()).findViewById(R.id.xAxisTextView);
+//        TextView yAxisTextView = ((Activity) this.getContext()).findViewById(R.id.yAxisTextView);
+//        TextView directionAxisTextView = ((Activity) this.getContext()).findViewById(R.id.directionAxisTextView);
+//
+//        xAxisTextView.setText(String.valueOf(col - 1));
+//        yAxisTextView.setText(String.valueOf(row - 1));
+//        directionAxisTextView.setText(direction);
+//    }
 
-        xAxisTextView.setText(String.valueOf(col - 1));
-        yAxisTextView.setText(String.valueOf(row - 1));
-        directionAxisTextView.setText(direction);
-    }
-
+    //    Set waypoint grid and show on map
     private void setWaypointCoord(int col, int row) throws JSONException {
         showLog("Entering setWaypointCoord");
         waypointCoord[0] = col;
@@ -446,6 +477,7 @@ public class GridMap extends View {
         return waypointCoord;
     }
 
+    //    Set obstacle grid and show on map
     private void setObstacleCoord(int col, int row) {
         showLog("Entering setObstacleCoord");
         int[] obstacleCoord = new int[]{col, row};
@@ -522,7 +554,7 @@ public class GridMap extends View {
                     this.paint = obstacleColor;
                     break;
                 case "robot":
-                    this.paint = robotColor;
+                    this.paint = robotBase;
                     break;
                 case "end":
                     this.paint = endColor;
@@ -562,6 +594,7 @@ public class GridMap extends View {
         }
     }
 
+    //    When the map is clicked, Set start coordinate, waypoint coordinate, explored and obstacle grids
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         showLog("Entering onTouchEvent");
@@ -589,21 +622,21 @@ public class GridMap extends View {
                     direction = "up";
                 }
                 try {
-                    int directionInt = 0;
+                    String updateDirection = "";
                     if (direction.equals("up")) {
-                        directionInt = 0;
+                        updateDirection = "N";
                     } else if (direction.equals("left")) {
-                        directionInt = 3;
+                        updateDirection = "W";
                     } else if (direction.equals("right")) {
-                        directionInt = 1;
+                        updateDirection = "E";
                     } else if (direction.equals("down")) {
-                        directionInt = 2;
+                        updateDirection = "S";
                     }
-                    MainActivity.printMessage("starting " + "(" + String.valueOf(row - 1) + "," + String.valueOf(column - 1) + "," + String.valueOf(directionInt) + ")");
+                    MainActivity.printMessage("SP:" + String.valueOf(row - 1) + ":" + String.valueOf(column - 1) + ":" + updateDirection);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                updateRobotAxis(column, row, direction);
+//                updateRobotAxis(column, row, direction);
                 if (setStartPointToggleBtn.isChecked())
                     setStartPointToggleBtn.toggle();
                 this.invalidate();
@@ -648,6 +681,7 @@ public class GridMap extends View {
         return false;
     }
 
+    //    Toggling to update statuses
     public void toggleCheckedBtn(String buttonName) {
         ToggleButton setStartPointToggleBtn = ((Activity) this.getContext()).findViewById(R.id.setStartPointToggleBtn);
         ToggleButton setWaypointToggleBtn = ((Activity) this.getContext()).findViewById(R.id.setWaypointToggleBtn);
@@ -677,12 +711,13 @@ public class GridMap extends View {
     }
 
 
+    //    Reset map to a blank state
     public void resetMap() {
         showLog("Entering resetMap");
         TextView robotStatusTextView = ((Activity) this.getContext()).findViewById(R.id.robotStatusTextView);
         Switch manualAutoToggleBtn = ((Activity) this.getContext()).findViewById(R.id.manualAutoToggleBtn);
         Switch phoneTiltSwitch = ((Activity) this.getContext()).findViewById(R.id.phoneTiltSwitch);
-        updateRobotAxis(1, 1, "None");
+//        updateRobotAxis(1, 1, "None");
         robotStatusTextView.setText("Not Available");
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -711,12 +746,14 @@ public class GridMap extends View {
         mapDrawn = false;
         canDrawRobot = false;
         validPosition = false;
+        publicImagesString = new ArrayList<>();
         Bitmap arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_error);
 
         showLog("Exiting resetMap");
         this.invalidate();
     }
 
+    //    Update map information with respective robot location, explored, unexplored and obstacle grids
     public void updateMapInformation() throws JSONException {
         showLog("Entering updateMapInformation");
         JSONObject mapInformation = this.getReceivedJsonObject();
@@ -726,43 +763,49 @@ public class GridMap extends View {
         String hexStringExplored, hexStringObstacle, exploredString, obstacleString;
         BigInteger hexBigIntegerExplored, hexBigIntegerObstacle;
         String message;
+        String robotCenter = null;
+        int exploredCount = 9;
+        List<Integer> roboCenterlist = new ArrayList<Integer>();
 
         if (mapInformation == null)
             return;
 
+        showLog("LENGTH MapInfo: " + mapInformation.length());
         for (int i = 0; i < mapInformation.names().length(); i++) {
             message = "updateMapInformation Default message";
             showLog("MapInfo: " + mapInformation.names().getString(i));
             switch (mapInformation.names().getString(i)) {
                 case "map":
-                    infoJsonArray = mapInformation.getJSONArray("map");
-                    infoJsonObject = infoJsonArray.getJSONObject(0);
-
-                    hexStringExplored = infoJsonObject.getString("explored");
+                    showLog("map CHECK");
+                    showLog("mapFIND: " + mapInformation.getString("map"));
+                    hexStringExplored = mapInformation.getString("map");
                     hexBigIntegerExplored = new BigInteger(hexStringExplored, 16);
                     exploredString = hexBigIntegerExplored.toString(2);
                     showLog("updateMapInformation.exploredString: " + exploredString);
-
+                    showLog(String.valueOf(exploredString.length()));
                     int x, y;
-                    for (int j = 0; j < exploredString.length() - 4; j++) {
+                    for (int j = 0; j < (exploredString.length() - 4); j++) {
                         y = 19 - (j / 15);
                         x = 1 + j - ((19 - y) * 15);
-                        if ((String.valueOf(exploredString.charAt(j + 2))).equals("1") && !cells[x][y].type.equals("robot"))
+                        if ((String.valueOf(exploredString.charAt(j + 2))).equals("1") && !cells[x][y].type.equals("robot")) {
                             cells[x][y].setType("explored");
-                        else if ((String.valueOf(exploredString.charAt(j + 2))).equals("0") && !cells[x][y].type.equals("robot"))
+                            exploredCount++;
+                        } else if ((String.valueOf(exploredString.charAt(j + 2))).equals("0") && !cells[x][y].type.equals("robot"))
                             cells[x][y].setType("unexplored");
                     }
-
-                    int length = infoJsonObject.getInt("length");
-
-                    hexStringObstacle = infoJsonObject.getString("obstacle");
+                    hexStringObstacle = mapInformation.getString("obstacle");
                     showLog("updateMapInformation hexStringObstacle: " + hexStringObstacle);
+                    int length = hexStringObstacle.length() * 4;
                     hexBigIntegerObstacle = new BigInteger(hexStringObstacle, 16);
                     showLog("updateMapInformation hexBigIntegerObstacle: " + hexBigIntegerObstacle);
                     obstacleString = hexBigIntegerObstacle.toString(2);
+                    showLog("obstacleSTRinHEXx4: " + length);
+                    showLog("obstacleSTRprePad: " + obstacleString.length());
+                    showLog("exploredGrids: " + exploredCount);
                     while (obstacleString.length() < length) {
                         obstacleString = "0" + obstacleString;
                     }
+                    showLog("obstacleSTRpostPad: " + obstacleString.length());
                     showLog("updateMapInformation obstacleString: " + obstacleString);
                     setPublicMDFExploration(hexStringExplored);
                     setPublicMDFObstacle(hexStringObstacle);
@@ -781,21 +824,18 @@ public class GridMap extends View {
                         cells[waypointCoord[0]][20 - waypointCoord[1]].setType("waypoint");
                     break;
                 case "robotPosition":
+                    showLog("roboPos REACHED");
                     if (canDrawRobot)
                         this.setOldRobotCoord(curCoord[0], curCoord[1]);
                     infoJsonArray = mapInformation.getJSONArray("robotPosition");
-//                    infoJsonObject = infoJsonArray.getJSONObject(0);
-
-//                    for (int row = ROW - 1; row >= 0; row--)
-//                        for (int col = 1; col <= COL; col++)
-//                            cells[col][row].setType("unexplored");
-
+                    showLog("roboPos1: " + infoJsonArray.getString(0));
+                    showLog("roboPos2: " + infoJsonArray.getString(1));
                     String direction;
-                    if (infoJsonArray.getInt(2) == 90) {
+                    if (infoJsonArray.getString(2) == "E") {
                         direction = "right";
-                    } else if (infoJsonArray.getInt(2) == 180) {
+                    } else if (infoJsonArray.getString(2) == "S") {
                         direction = "down";
-                    } else if (infoJsonArray.getInt(2) == 270) {
+                    } else if (infoJsonArray.getString(2) == "W") {
                         direction = "left";
                     } else {
                         direction = "up";
@@ -804,20 +844,48 @@ public class GridMap extends View {
                     this.setCurCoord(infoJsonArray.getInt(0) + 2, convertRow(infoJsonArray.getInt(1)) - 1, direction);
                     canDrawRobot = true;
                     break;
+                case "robotCenter":
+                    showLog("roboCenter REACHED");
+                    showLog(curCoord[0] + ", " + curCoord[1]);
+                    if (canDrawRobot)
+                        this.setOldRobotCoord(curCoord[0], curCoord[1]);
+                    robotCenter = mapInformation.getString("robotCenter");
+                    showLog("roboCenter: " + robotCenter);
+                    String[] splitRobotCenter = robotCenter.replace(" ", "").split(",|\\(|\\)");
+                    showLog("splits: " + splitRobotCenter[0] + ", " + splitRobotCenter[1]);
+
+                    roboCenterlist = new ArrayList<Integer>();
+                    Matcher roboCenterMatcher = Pattern.compile("\\d+").matcher(robotCenter);
+                    while(roboCenterMatcher.find()) {
+                        roboCenterlist.add(Integer.parseInt(roboCenterMatcher.group()));
+                    }
+                    this.setStartCoord(Integer.parseInt(String.valueOf(roboCenterlist.get(0))), Integer.parseInt(String.valueOf(roboCenterlist.get(1))));
+                    canDrawRobot = true;
+                    break;
+                case "heading":
+                    showLog("roboHeading REACHED");
+                    String robotHeading = mapInformation.getString("heading");
+                    showLog("roboHeading: " + robotHeading);
+
+                    String roboHead = String.valueOf(robotHeading.charAt(0));
+                    if (roboHead.contentEquals("E")) {
+                        roboHead = "right";
+                    } else if (roboHead.contentEquals("S")) {
+                        roboHead = "down";
+                    } else if (roboHead.contentEquals("W")) {
+                        roboHead = "left";
+                    } else {
+                        roboHead = "up";
+                    }
+                    showLog("roboHead: " + roboHead);
+                    this.setCurCoord(Integer.parseInt(String.valueOf(roboCenterlist.get(0))) + 1, Integer.parseInt(String.valueOf(roboCenterlist.get(1))) + 1, roboHead);
+                    canDrawRobot = true;
+                    break;
                 case "waypoint":
                     infoJsonArray = mapInformation.getJSONArray("waypoint");
                     infoJsonObject = infoJsonArray.getJSONObject(0);
                     this.setWaypointCoord(infoJsonObject.getInt("x"), infoJsonObject.getInt("y"));
                     setWaypointStatus = true;
-                    break;
-                case "obstacle":
-                    infoJsonArray = mapInformation.getJSONArray("obstacle");
-                    for (int j = 0; j < infoJsonArray.length(); j++) {
-                        infoJsonObject = infoJsonArray.getJSONObject(j);
-                        this.setObstacleCoord(infoJsonObject.getInt("x"), infoJsonObject.getInt("y"));
-                    }
-                    message = "No. of Obstacle: " + String.valueOf(infoJsonArray.length());
-                    showLog(message);
                     break;
                 case "arrow":
                     infoJsonArray = mapInformation.getJSONArray("arrow");
@@ -837,10 +905,6 @@ public class GridMap extends View {
                     message = "moveDirection: " + infoJsonObject.getString("direction");
                     break;
                 case "status":
-//                    infoJsonArray = mapInformation.getJSONArray("status");
-//                    infoJsonObject = infoJsonArray.getJSONObject(0);
-//                    printRobotStatus(infoJsonObject.getString("status"));
-//                    message = "status: " + infoJsonObject.getString("status");
                     String msg = mapInformation.getString("status");
                     printRobotStatus(msg);
                     message = "status: " + msg;
@@ -856,6 +920,7 @@ public class GridMap extends View {
         this.invalidate();
     }
 
+    //    To move robot in direction given
     public void moveRobot(String direction) {
         showLog("Entering moveRobot");
         setValidPosition(false);
@@ -975,8 +1040,7 @@ public class GridMap extends View {
                         if (obstacleCoord.get(i)[0] != x || obstacleCoord.get(i)[1] != y) {
                             showLog("obsCo: " + obstacleCoord.get(i)[0] + ", " + obstacleCoord.get(i)[1]);
                             setValidPosition(true);
-                        }
-                        else {
+                        } else {
                             setValidPosition(false);
                             break;
                         }
@@ -998,6 +1062,7 @@ public class GridMap extends View {
         showLog("Exiting moveRobot");
     }
 
+    //    Create JSON object for map information
     public JSONObject getCreateJsonObject() {
         showLog("Entering getCreateJsonObject");
         String exploredString = "11";
@@ -1042,10 +1107,6 @@ public class GridMap extends View {
         }
 
         showLog("After loop: obstacleString: " + obstacleString + ", length: " + obstacleString.length());
-
-
-//        publicMDFObstacle = obstacleString;
-//        publicMDFExploration = exploredString;
 
         if (!obstacleString.equals("")) {
             hexBigIntegerObstacle = new BigInteger(obstacleString, 2);
@@ -1141,6 +1202,7 @@ public class GridMap extends View {
         return mapInformation;
     }
 
+    //    Display robot status
     public void printRobotStatus(String message) {
         TextView robotStatusTextView = ((Activity) this.getContext()).findViewById(R.id.robotStatusTextView);
         robotStatusTextView.setText(message);
@@ -1154,12 +1216,13 @@ public class GridMap extends View {
         publicMDFObstacle = msg;
     }
 
-    public static String getPublicMDFExploration() {
-        return publicMDFExploration;
-    }
+    public static String getPublicMDFExploration() { return publicMDFExploration; }
 
     public static String getPublicMDFObstacle() {
         return publicMDFObstacle;
     }
 
+    public static void addPublicImageString(String str) { publicImagesString.add(str); }
+
+    public static ArrayList<String> getPublicImagesString() { return publicImagesString; };
 }

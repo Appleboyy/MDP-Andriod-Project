@@ -9,10 +9,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,13 +25,13 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.MDP_Android.ui.main.BluetoothConnectionService;
-import com.example.MDP_Android.ui.main.BluetoothPopUp;
+import com.example.MDP_Android.ui.main.BluetoothDeviceConnector;
 import com.example.MDP_Android.ui.main.CommsFragment;
 import com.example.MDP_Android.ui.main.GridMap;
-import com.example.MDP_Android.ui.main.MapInformation;
 import com.example.MDP_Android.ui.main.MapTabFragment;
 import com.example.MDP_Android.ui.main.ReconfigureFragment;
 import com.example.MDP_Android.ui.main.SectionsPagerAdapter;
+import com.example.MDP_Android.ui.main.OnSwipeTouchListener;
 import com.google.android.material.tabs.TabLayout;
 
 import org.json.JSONArray;
@@ -40,31 +44,28 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Declaration Variables
-
-    //hfdjhfjdhjfhdjhfh
+    // Declare Variables
     private static SharedPreferences sharedPreferences;
     private static SharedPreferences.Editor editor;
     private static Context context;
 
     private static GridMap gridMap;
-    static TextView xAxisTextView, yAxisTextView, directionAxisTextView;
-    static TextView robotStatusTextView;
+    static TextView xAxisTextView, yAxisTextView, directionAxisTextView, robotStatusTextView;
+    static ImageView swipeGestureView;
     static Button f1, f2;
     Button reconfigure;
     ReconfigureFragment reconfigureFragment = new ReconfigureFragment();
 
-    BluetoothConnectionService mBluetoothConnection;
     BluetoothDevice mBTDevice;
     private static UUID myUUID;
     ProgressDialog myDialog;
 
-    private static final String TAG = "Main Activity";
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        // Initialization
+//        Initialization
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         tabs.setupWithViewPager(viewPager);
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, new IntentFilter("incomingMessage"));
 
-        // Set up sharedPreferences
+//       Set up sharedPreferences
         MainActivity.context = getApplicationContext();
         this.sharedPreferences();
         editor.putString("message", "");
@@ -83,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
         editor.putString("connStatus", "Disconnected");
         editor.commit();
 
+//       Initialise Button to print MDF String of present map
         Button printMDFStringButton = (Button) findViewById(R.id.printMDFString);
         printMDFStringButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,37 +101,43 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Toolbar
+//       Initialise Button to print Image String of present map
+        Button printImageStringButton = (Button) findViewById(R.id.printImageString);
+        printImageStringButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String message = "Images Captured: " + GridMap.getPublicImagesString().toString();
+                editor = sharedPreferences.edit();
+                editor.putString("message", CommsFragment.getMessageReceivedTextView().getText() + "\n" + message);
+                editor.commit();
+                refreshMessageReceived();
+            }
+        });
+
+//       Initialise Button to Bluetooth Connectivity Page
         Button bluetoothButton = (Button) findViewById(R.id.bluetoothButton);
         bluetoothButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent popup = new Intent(MainActivity.this, BluetoothPopUp.class);
-                startActivity(popup);
-            }
-        });
-        Button mapInformationButton = (Button) findViewById(R.id.mapInfoButton);
-        mapInformationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editor.putString("mapJsonObject", String.valueOf(gridMap.getCreateJsonObject()));
-                editor.commit();
-                Intent popup = new Intent(MainActivity.this, MapInformation.class);
+                Intent popup = new Intent(MainActivity.this, BluetoothDeviceConnector.class);
                 startActivity(popup);
             }
         });
 
 
-        // Map
+//       Initialise  Map
         gridMap = new GridMap(this);
         gridMap = findViewById(R.id.mapView);
-        xAxisTextView = findViewById(R.id.xAxisTextView);
-        yAxisTextView = findViewById(R.id.yAxisTextView);
-        directionAxisTextView = findViewById(R.id.directionAxisTextView);
-
-        // Robot Status
+//        Initialise TextView to show X & Y axis
+//        xAxisTextView = findViewById(R.id.xAxisTextView);
+//        yAxisTextView = findViewById(R.id.yAxisTextView);
+//        Initialise TextView to show Direction
+//        directionAxisTextView = findViewById(R.id.directionAxisTextView);
+//        Initialise TextView to show RobotStatus
         robotStatusTextView = findViewById(R.id.robotStatusTextView);
+        swipeGestureView = findViewById(R.id.swipeGestureView);
 
+//        Initialise ProgressDialog for possible Bluetooth reconnection
         myDialog = new ProgressDialog(MainActivity.this);
         myDialog.setMessage("Waiting for other device to reconnect...");
         myDialog.setCancelable(false);
@@ -140,19 +148,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+//        Initialise Buttons for F1, F2 and Reconfiguration of F1 & F2
         f1 = (Button) findViewById(R.id.f1ActionButton);
         f2 = (Button) findViewById(R.id.f2ActionButton);
         reconfigure = (Button) findViewById(R.id.configureButton);
 
+//        Set saved F1 string to F1 button
         if (sharedPreferences.contains("F1")) {
             f1.setContentDescription(sharedPreferences.getString("F1", ""));
             showLog("setText for f1Btn: " + f1.getContentDescription().toString());
         }
+
+//        Set saved F2 string to F2 button
         if (sharedPreferences.contains("F2")) {
             f2.setContentDescription(sharedPreferences.getString("F2", ""));
             showLog("setText for f2Btn: " + f2.getContentDescription().toString());
         }
 
+//        On click of F1 button, only if it has a assigned value, it will be printed
         f1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -164,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+//        On click of F2 button, only if it has a assigned value, it will be printed
         f2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -175,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+//        On click of `Reconfigure`, the reconfigure menu will show
         reconfigure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -183,6 +198,59 @@ public class MainActivity extends AppCompatActivity {
                 showLog("Exiting reconfigureBtn");
             }
         });
+
+        swipeGestureView.setOnTouchListener(new OnSwipeTouchListener(context) {
+            public void onSwipeTop() {
+                if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
+                    gridMap.moveRobot("forward");
+//                    MainActivity.refreshLabel();
+                    if (gridMap.getValidPosition()) {
+                        gridMap.printRobotStatus("moving forward");
+                    } else {
+                        gridMap.printRobotStatus("holding position");
+                    }
+                    MainActivity.printMessage("w");
+                }
+//                Toast.makeText(context, "top", Toast.LENGTH_SHORT).show();
+            };
+            public void onSwipeRight() {
+                if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
+                    gridMap.moveRobot("right");
+                    MainActivity.printMessage("d");
+                    gridMap.printRobotStatus("turning right");
+                }
+//                Toast.makeText(context, "right", Toast.LENGTH_SHORT).show();
+            }
+            public void onSwipeLeft() {
+                if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
+                    gridMap.moveRobot("left");
+                    MainActivity.printMessage("a");
+                    gridMap.printRobotStatus("turning left");
+                }
+//                Toast.makeText(context, "left", Toast.LENGTH_SHORT).show();
+            }
+            public void onSwipeBottom() {
+                if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
+                    gridMap.moveRobot("back");
+                    if (gridMap.getValidPosition()) {
+                        gridMap.printRobotStatus("reversing");
+                    } else {
+                        gridMap.printRobotStatus("holding position");
+                    }
+                    MainActivity.printMessage("TAKE");
+                }
+//                Toast.makeText(context, "bottom", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        if (Build.VERSION.SDK_INT >= 21) {
+            Window window = this.getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                window.setStatusBarColor(this.getResources().getColor(R.color.colorPrimary));
+            }
+        }
     }
 
     public static Button getF1() {
@@ -206,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
         editor = sharedPreferences.edit();
     }
 
-    // Send message to bluetooth
+    //       Send message via bluetooth
     public static void printMessage(String message) {
         showLog("Entering printMessage");
         editor = sharedPreferences.edit();
@@ -215,34 +283,29 @@ public class MainActivity extends AppCompatActivity {
             byte[] bytes = message.getBytes(Charset.defaultCharset());
             BluetoothConnectionService.write(bytes);
         }
-        showLog(message);
-        editor.putString("message", CommsFragment.getMessageReceivedTextView().getText() + "\n" + message);
+        editor.putString("message", CommsFragment.getMessageReceivedTextView().getText() + "\n\n" + message);
         editor.commit();
         refreshMessageReceived();
         showLog("Exiting printMessage");
     }
 
+    //        Send x, y coordinate for way point via bluetooth
     public static void printMessage(String name, int x, int y) throws JSONException {
-        showLog("Entering printMessage");
-        sharedPreferences();
-
-        JSONObject jsonObject = new JSONObject();
+        showLog("Entering printMessage w coordinates");
+        editor = sharedPreferences.edit();
         String message;
 
         switch (name) {
-//            case "starting":
             case "waypoint":
-                jsonObject.put(name, name);
-                jsonObject.put("x", x);
-                jsonObject.put("y", y);
                 message = "WP:" + x + ":" + y;
                 break;
             default:
-                message = "Unexpected default for printMessage: " + name;
+                message = "Unexpected printMessage by: " + name;
                 break;
         }
-        editor.putString("message", CommsFragment.getMessageReceivedTextView().getText() + "\n" + message);
+        editor.putString("message", CommsFragment.getMessageReceivedTextView().getText() + "\n\n" + message);
         editor.commit();
+        refreshMessageReceived();
         if (BluetoothConnectionService.BluetoothConnectionStatus == true) {
             byte[] bytes = message.getBytes(Charset.defaultCharset());
             BluetoothConnectionService.write(bytes);
@@ -250,23 +313,26 @@ public class MainActivity extends AppCompatActivity {
         showLog("Exiting printMessage");
     }
 
+    //        Update communication box output
     public static void refreshMessageReceived() {
         CommsFragment.getMessageReceivedTextView().setText(sharedPreferences.getString("message", ""));
     }
 
-
+    //        Update Direction
     public void refreshDirection(String direction) {
         gridMap.setRobotDirection(direction);
         directionAxisTextView.setText(sharedPreferences.getString("direction", ""));
         printMessage("Direction is set to " + direction);
     }
 
-    public static void refreshLabel() {
-        xAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[0] - 1));
-        yAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[1] - 1));
-        directionAxisTextView.setText(sharedPreferences.getString("direction", ""));
-    }
+    //        Update X & Y axis label
+//    public static void refreshLabel() {
+//        xAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[0] - 1));
+//        yAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[1] - 1));
+//        directionAxisTextView.setText(sharedPreferences.getString("direction", ""));
+//    }
 
+    //        Update received messages to communication box
     public static void receiveMessage(String message) {
         showLog("Entering receiveMessage");
         sharedPreferences();
@@ -275,15 +341,18 @@ public class MainActivity extends AppCompatActivity {
         showLog("Exiting receiveMessage");
     }
 
+    //        Method to simplify logging
     private static void showLog(String message) {
         Log.d(TAG, message);
     }
 
+    //    Retrieve shared preference storage
     private static SharedPreferences getSharedPreferences(Context context) {
         return context.getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
     }
 
-    private BroadcastReceiver mBroadcastReceiver5 = new BroadcastReceiver() {
+    //      Bluetooth connection listener
+    private BroadcastReceiver bluetoothListener = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             BluetoothDevice mDevice = intent.getParcelableExtra("Device");
@@ -297,36 +366,30 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                Log.d(TAG, "mBroadcastReceiver5: Device now connected to " + mDevice.getName());
+                Log.d(TAG, "bluetoothListener: Device now connected to " + mDevice.getName());
                 Toast.makeText(MainActivity.this, "Device now connected to " + mDevice.getName(), Toast.LENGTH_LONG).show();
                 editor.putString("connStatus", "Connected to " + mDevice.getName());
-//                TextView connStatusTextView = findViewById(R.id.connStatusTextView);
-//                connStatusTextView.setText("Connected to " + mDevice.getName());
             } else if (status.equals("disconnected")) {
-                Log.d(TAG, "mBroadcastReceiver5: Disconnected from " + mDevice.getName());
+                Log.d(TAG, "bluetoothListener: Disconnected from " + mDevice.getName());
                 Toast.makeText(MainActivity.this, "Disconnected from " + mDevice.getName(), Toast.LENGTH_LONG).show();
-//                mBluetoothConnection = new BluetoothConnectionService(MainActivity.this);
-//                mBluetoothConnection.startAcceptThread();
-
                 editor.putString("connStatus", "Disconnected");
-//                TextView connStatusTextView = findViewById(R.id.connStatusTextView);
-//                connStatusTextView.setText("Disconnected");
-
                 myDialog.show();
             }
             editor.commit();
         }
     };
 
+    //    Read messages received through bluetooth
     BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String message = intent.getStringExtra("receivedMessage");
             showLog("receivedMessage: message --- " + message + " ---");
+            String[] messageSplit = message.split("\"");
+
+//            Decode grid map sent from AMDToolkit
             try {
-                if (message.length() > 7 && message.substring(2, 6).equals("grid") && (gridMap.getAutoUpdate() || MapTabFragment.manualUpdateRequest)) {
-                    showLog("GMAU 4 grid: " + gridMap.getAutoUpdate());
-                    showLog("MTFMUR 4 grid: " + MapTabFragment.manualUpdateRequest);
+                if (messageSplit[1].equals("grid") && (gridMap.getAutoUpdate() || MapTabFragment.manualUpdateRequest)) {
                     String resultString = "";
                     String amdString = message.substring(11, message.length() - 2);
                     showLog("amdString: " + amdString);
@@ -365,27 +428,28 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
+//            Decode image id sent from rPI
+            for (int i = 0; i < messageSplit.length; i++) {
+                showLog("Image Tests: " + messageSplit[i]);
+            }
             try {
-                if (message.length() > 8 && message.substring(2, 7).equals("image")) {
-//                    JSONObject jsonObject = new JSONObject(message);
-//                    JSONArray jsonArray = jsonObject.getJSONArray("image");
-//                    gridMap.drawImageNumberCell(jsonArray.getInt(0), jsonArray.getInt(1), jsonArray.getInt(2));
-//                    showLog("Image Added for index: " + jsonArray.getInt(0) + "," + jsonArray.getInt(1));
-//                    To clear checklist
-                    String[] splitImageMsg = message.split("\"");
-                    gridMap.drawImageNumberCell(Integer.parseInt(splitImageMsg[3]), Integer.parseInt(splitImageMsg[5]), Integer.parseInt(splitImageMsg[7]));
-                    showLog("Image Added for index: " + Integer.parseInt(splitImageMsg[3]) + "," + Integer.parseInt(splitImageMsg[5]));
+                if (messageSplit[1].equals("image")) {
+                    gridMap.drawImageNumberCell(Integer.parseInt(messageSplit[3]), Integer.parseInt(messageSplit[5]), Integer.parseInt(messageSplit[7]));
+                    showLog("Image Added for index: " + Integer.parseInt(messageSplit[3]) + "," + Integer.parseInt(messageSplit[5]));
+                    gridMap.publicImagesString.add("{" + messageSplit[7] + "," + messageSplit[3] + "," + messageSplit[5] + "}");
                 }
             } catch (Exception e) {
                 showLog("Adding Image Failed");
             }
 
+//            Update grid map automatically or manually
             if (gridMap.getAutoUpdate() || MapTabFragment.manualUpdateRequest) {
-                showLog("GMAU: " + gridMap.getAutoUpdate());
-                showLog("MTFMUR: " + MapTabFragment.manualUpdateRequest);
                 showLog("messageReceiver: update map request");
                 try {
+                    if (message.contains("ROBOT")) message = message.substring(8);
+                    showLog(message);
                     gridMap.setReceivedJsonObject(new JSONObject(message));
+                    showLog(gridMap.getReceivedJsonObject().toString());
                     gridMap.updateMapInformation();
                     MapTabFragment.manualUpdateRequest = false;
                     showLog("messageReceiver: try decode successful");
@@ -393,7 +457,8 @@ public class MainActivity extends AppCompatActivity {
                     showLog("messageReceiver: try decode unsuccessful");
                 }
             } else {
-                if (message.length() > 9 && message.substring(2, 8).equals("status")) {
+//                Update status even if grid map is not updated [CHECK]
+                if (messageSplit[1].equals("status")) {
                     try {
                         String[] splitStatusMsg = message.split("\"");
                         showLog("updateRobotStatus: " + splitStatusMsg.toString());
@@ -405,6 +470,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
+//            Retrieve and update the communication box
             sharedPreferences();
             String receivedText = sharedPreferences.getString("message", "") + "\n" + message;
             editor.putString("message", receivedText);
@@ -431,7 +497,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         try {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver5);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(bluetoothListener);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
@@ -441,7 +507,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         try {
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver5);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(bluetoothListener);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
@@ -451,8 +517,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         try {
-            IntentFilter filter2 = new IntentFilter("ConnectionStatus");
-            LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver5, filter2);
+            IntentFilter filter = new IntentFilter("ConnectionStatus");
+            LocalBroadcastManager.getInstance(this).registerReceiver(bluetoothListener, filter);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }

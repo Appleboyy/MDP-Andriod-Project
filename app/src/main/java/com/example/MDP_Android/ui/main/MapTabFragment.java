@@ -1,7 +1,13 @@
 package com.example.MDP_Android.ui.main;
 
+import android.content.ActivityNotFoundException;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.hardware.Camera;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,15 +27,17 @@ import com.example.MDP_Android.R;
 
 import org.json.JSONException;
 
+// Map fragment to control map updates
 public class MapTabFragment extends Fragment {
 
+    //    Initialise variables
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String TAG = "MapFragment";
 
     private PageViewModel pageViewModel;
 
     Button resetMapBtn, updateButton;
-    ImageButton directionChangeImageBtn, exploredImageBtn, obstacleImageBtn, clearImageBtn;
+    ImageButton directionChangeImageBtn, exploredImageBtn, obstacleImageBtn, clearImageBtn, mapCaptureBtn;
     ToggleButton setStartPointToggleBtn, setWaypointToggleBtn;
     Switch manualAutoToggleBtn;
     GridMap gridMap;
@@ -44,7 +52,6 @@ public class MapTabFragment extends Fragment {
         return fragment;
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +63,7 @@ public class MapTabFragment extends Fragment {
         pageViewModel.setIndex(index);
     }
 
+    //    Setup page variables
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
@@ -72,8 +80,18 @@ public class MapTabFragment extends Fragment {
         exploredImageBtn = root.findViewById(R.id.exploredImageBtn);
         obstacleImageBtn = root.findViewById(R.id.obstacleImageBtn);
         clearImageBtn = root.findViewById(R.id.clearImageBtn);
+        mapCaptureBtn = root.findViewById(R.id.mapCaptureBtn);
         manualAutoToggleBtn = root.findViewById(R.id.manualAutoToggleBtn);
         updateButton = root.findViewById(R.id.updateButton);
+
+        mapCaptureBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showLog("Clicked resetMapBtn");
+                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivity(intent);
+            }
+        });
 
         resetMapBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,8 +128,7 @@ public class MapTabFragment extends Fragment {
                     showToast("Please select waypoint");
                     gridMap.setWaypointStatus(true);
                     gridMap.toggleCheckedBtn("setWaypointToggleBtn");
-                }
-                else
+                } else
                     showToast("Please select manual mode");
                 showLog("Exiting setWaypointToggleBtn");
             }
@@ -134,8 +151,7 @@ public class MapTabFragment extends Fragment {
                     showToast("Please check cell");
                     gridMap.setExploredStatus(true);
                     gridMap.toggleCheckedBtn("exploredImageBtn");
-                }
-                else if (gridMap.getExploredStatus())
+                } else if (gridMap.getExploredStatus())
                     gridMap.setSetObstacleStatus(false);
                 showLog("Exiting exploredImageBtn");
             }
@@ -149,8 +165,7 @@ public class MapTabFragment extends Fragment {
                     showToast("Please plot obstacles");
                     gridMap.setSetObstacleStatus(true);
                     gridMap.toggleCheckedBtn("obstacleImageBtn");
-                }
-                else if (gridMap.getSetObstacleStatus())
+                } else if (gridMap.getSetObstacleStatus())
                     gridMap.setSetObstacleStatus(false);
                 showLog("Exiting obstacleImageBtn");
             }
@@ -164,8 +179,7 @@ public class MapTabFragment extends Fragment {
                     showToast("Please remove cells");
                     gridMap.setUnSetCellStatus(true);
                     gridMap.toggleCheckedBtn("clearImageBtn");
-                }
-                else if (gridMap.getUnSetCellStatus())
+                } else if (gridMap.getUnSetCellStatus())
                     gridMap.setUnSetCellStatus(false);
                 showLog("Exiting clearImageBtn");
             }
@@ -189,8 +203,7 @@ public class MapTabFragment extends Fragment {
                         e.printStackTrace();
                     }
                     showToast("AUTO mode");
-                }
-                else if (manualAutoToggleBtn.getText().equals("AUTO")) {
+                } else if (manualAutoToggleBtn.getText().equals("AUTO")) {
                     try {
                         gridMap.setAutoUpdate(false);
                         autoUpdate = false;
@@ -217,18 +230,8 @@ public class MapTabFragment extends Fragment {
                 MainActivity.printMessage("sendArena");
                 manualUpdateRequest = true;
                 showLog("Exiting updateButton");
-//                try {
-//                    String message = "{\"map\":[{\"explored\": \"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\",\"length\":300,\"obstacle\":\"00000000000000000706180400080010001e000400000000200044438f840000000000000080\"}]}";
-//
-//                    gridMap.setReceivedJsonObject(new JSONObject(message));
-//                    gridMap.updateMapInformation();
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
             }
         });
-
-
 
         return root;
     }
@@ -240,5 +243,4 @@ public class MapTabFragment extends Fragment {
     private void showToast(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
-
 }

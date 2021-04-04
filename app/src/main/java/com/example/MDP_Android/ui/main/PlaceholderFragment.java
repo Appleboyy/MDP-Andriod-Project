@@ -14,9 +14,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.MDP_Android.R;
 
-/**
- * A placeholder fragment containing a simple view.
- */
+// Simplified fragment setup
 public class PlaceholderFragment extends Fragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";

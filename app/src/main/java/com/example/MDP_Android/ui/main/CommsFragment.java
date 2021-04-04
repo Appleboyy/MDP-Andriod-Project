@@ -20,24 +20,22 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.nio.charset.Charset;
 
-/**
- * A placeholder fragment containing a simple view.
- */
+// Communication fragment to view messages received and send messages
 public class CommsFragment extends Fragment {
 
+    //    Initialise variables
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String TAG = "CommsFragment";
 
     private PageViewModel pageViewModel;
 
-    // Declaration Variable
-    // Shared Preferences
     SharedPreferences sharedPreferences;
 
     FloatingActionButton send;
     private static TextView messageReceivedTextView;
     private EditText typeBoxEditText;
 
+    //    Setup page variables
     public static CommsFragment newInstance(int index) {
         CommsFragment fragment = new CommsFragment();
         Bundle bundle = new Bundle();
@@ -45,7 +43,6 @@ public class CommsFragment extends Fragment {
         fragment.setArguments(bundle);
         return fragment;
     }
-
 
 
     @Override
@@ -67,14 +64,15 @@ public class CommsFragment extends Fragment {
 
         send = (FloatingActionButton) root.findViewById(R.id.messageButton);
 
-        // Message Box
+//         Initialise communication Box
         messageReceivedTextView = (TextView) root.findViewById(R.id.messageReceivedTextView);
         messageReceivedTextView.setMovementMethod(new ScrollingMovementMethod());
         typeBoxEditText = (EditText) root.findViewById(R.id.typeBoxEditText);
 
-        // get shared preferences
+//         Retrieve shared preferences
         sharedPreferences = getActivity().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
 
+//        Sends message to bluetooth sending service
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -10,7 +10,7 @@
 
     <EditText
         android:id="@+id/typeBoxEditText"
-        android:layout_width="540dp"
+        android:layout_width="485dp"
         android:layout_height="50dp"
         android:layout_marginTop="4dp"
         android:background="@drawable/rounded_corner"
@@ -39,11 +39,11 @@
         android:id="@+id/messageReceivedTitleTextView"
         android:layout_width="fill_parent"
         android:layout_height="30dp"
-        android:background="@drawable/border_black_background"
+        android:background="@drawable/border_red_background"
         android:gravity="center"
         android:text="Message"
         android:textAlignment="center"
-        android:textColor="@color/colorWhite"
+        android:textColor="@color/colorAbyss"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -55,12 +55,26 @@
         android:layout_height="50dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginRight="4dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginRight="60dp"
         android:foreground="@drawable/ic_send"
         android:foregroundGravity="center"
-        app:backgroundTint="#0288D1"
+        app:backgroundTint="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/messageReceivedTextView"></com.google.android.material.floatingactionbutton.FloatingActionButton>
+        app:layout_constraintTop_toBottomOf="@+id/messageReceivedTextView" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/messageButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
+        android:foreground="@drawable/ic_baseline_mic_36"
+        android:foregroundGravity="center"
+        app:backgroundTint="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/messageReceivedTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

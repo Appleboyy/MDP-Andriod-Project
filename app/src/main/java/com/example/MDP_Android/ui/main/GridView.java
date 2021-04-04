@@ -24,6 +24,7 @@ import java.util.ArrayList;
 
 public class GridView extends View {
 
+    //    Initialise variables
     private static final String TAG = "GridView";
     private static final int COL = 15, ROW = 20;
     public static float cellSize;
@@ -51,6 +52,7 @@ public class GridView extends View {
         init(null);
     }
 
+    //    Setup page variables
     public GridView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(attrs);
@@ -72,6 +74,7 @@ public class GridView extends View {
         return (20 - row);
     }
 
+//    Create or update map
     @Override
     protected void onDraw(Canvas canvas) {
         showLog("Entering onDraw");
@@ -116,6 +119,7 @@ public class GridView extends View {
         showLog("Exiting onDraw");
     }
 
+//    Create each grid in map
     public void createCell() {
         showLog("Entering cellCreate");
         cells = new Cell[COL + 1][ROW + 1];
@@ -127,6 +131,7 @@ public class GridView extends View {
         showLog("Exiting createCell");
     }
 
+//    Set various grid info based on mapJSONObject input
     private void setMap(JSONObject mapJsonObject) throws JSONException {
         showLog("Entering setMap");
         this.mapJsonObject = mapJsonObject;
@@ -146,10 +151,10 @@ public class GridView extends View {
                     exploredString = hexBigIntegerExplored.toString(2);
 
                     int x, y;
-                    for (int j=0; j<exploredString.length()-4; j++) {
-                        y = 19 - (j/15);
-                        x = 1 + j - ((19-y)*15);
-                        if ((String.valueOf(exploredString.charAt(j+2))).equals("1"))
+                    for (int j = 0; j < exploredString.length() - 4; j++) {
+                        y = 19 - (j / 15);
+                        x = 1 + j - ((19 - y) * 15);
+                        if ((String.valueOf(exploredString.charAt(j + 2))).equals("1"))
                             cells[x][y].setType("explored");
                         else
                             cells[x][y].setType("unexplored");
@@ -230,9 +235,9 @@ public class GridView extends View {
         showLog("Entering drawGridNumber");
         for (int x = 1; x <= COL; x++) {
             if (x > 9)
-                canvas.drawText(Integer.toString(x-1), cells[x][20].startX + (cellSize / 4.5f), cells[x][20].startY + (cellSize / 2), blackPaint);
+                canvas.drawText(Integer.toString(x - 1), cells[x][20].startX + (cellSize / 4.5f), cells[x][20].startY + (cellSize / 2), blackPaint);
             else
-                canvas.drawText(Integer.toString(x-1), cells[x][20].startX + (cellSize / 3), cells[x][20].startY + (cellSize / 2), blackPaint);
+                canvas.drawText(Integer.toString(x - 1), cells[x][20].startX + (cellSize / 3), cells[x][20].startY + (cellSize / 2), blackPaint);
         }
         for (int y = 0; y < ROW; y++) {
             if ((20 - y) > 9)
@@ -278,8 +283,8 @@ public class GridView extends View {
 
     private void drawNumber(Canvas canvas) {
         showLog("Entering drawNumber");
-        for(int x=1; x<=COL; x++)
-            for(int y=0; y<ROW; y++)
+        for (int x = 1; x <= COL; x++)
+            for (int y = 0; y < ROW; y++)
                 switch (cells[x][y].type) {
                     case "unexplored":
                         showLog("unexplored x: " + x + ", y: " + y);
@@ -340,8 +345,8 @@ public class GridView extends View {
 
     private void drawObstacle(Canvas canvas) {
         showLog("Entering drawObstacle");
-        for(int x=1; x<=COL; x++)
-            for(int y=0; y<ROW; y++)
+        for (int x = 1; x <= COL; x++)
+            for (int y = 0; y < ROW; y++)
                 switch (cells[x][y].type) {
                     case "explored":
                         canvas.drawText(Integer.toString(0), cells[x][y].startX + (cellSize / 1.3f), cells[x][y].startY + (cellSize / 1.2f), blackPaint);
@@ -360,7 +365,7 @@ public class GridView extends View {
     public void plotObstacle() {
         showLog("Entering plotObstacle");
         int k = 0;
-        for (int row = ROW-1; row >= 0; row--)
+        for (int row = ROW - 1; row >= 0; row--)
             for (int col = 1; col <= COL; col++) {
                 if (cells[col][row].type.equals("explored")) {
                     if ((String.valueOf(obstacleString.charAt(k))).equals("1"))
@@ -377,10 +382,6 @@ public class GridView extends View {
 
     private void setCellSize(float cellSize) {
         this.cellSize = cellSize;
-    }
-
-    private float getCellSize() {
-        return this.cellSize;
     }
 
     private void showLog(String message) {

@@ -19,7 +19,10 @@ import androidx.annotation.Nullable;
 import com.example.MDP_Android.MainActivity;
 import com.example.MDP_Android.R;
 
+// Fragment for button F1, F2 and reconfiguring it
 public class ReconfigureFragment extends DialogFragment {
+
+    //    Initialise variables
     private static final String TAG = "ReconfigureFragment";
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
@@ -27,9 +30,9 @@ public class ReconfigureFragment extends DialogFragment {
     Button saveBtn, cancelReconfigureBtn;
     EditText f1ValueEditText, f2ValueEditText;
     String f1Value, f2Value;
-    View rootView;
-    View commsView;
+    View rootView, commsView;
 
+    //    Setup section variables
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
