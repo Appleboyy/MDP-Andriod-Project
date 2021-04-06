@@ -1,12 +1,17 @@
 package com.example.MDP_Android.ui.main;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.content.Context;
 import android.hardware.Camera;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,11 +19,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -27,12 +34,22 @@ import com.example.MDP_Android.R;
 
 import org.json.JSONException;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 // Map fragment to control map updates
 public class MapTabFragment extends Fragment {
 
     //    Initialise variables
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String TAG = "MapFragment";
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int RESULT_OK = 2;
 
     private PageViewModel pageViewModel;
 
@@ -41,6 +58,7 @@ public class MapTabFragment extends Fragment {
     ToggleButton setStartPointToggleBtn, setWaypointToggleBtn;
     Switch manualAutoToggleBtn;
     GridMap gridMap;
+    ImageView imageCaptureView;
     private static boolean autoUpdate = false;
     public static boolean manualUpdateRequest = false;
 
@@ -83,15 +101,7 @@ public class MapTabFragment extends Fragment {
         mapCaptureBtn = root.findViewById(R.id.mapCaptureBtn);
         manualAutoToggleBtn = root.findViewById(R.id.manualAutoToggleBtn);
         updateButton = root.findViewById(R.id.updateButton);
-
-        mapCaptureBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showLog("Clicked resetMapBtn");
-                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivity(intent);
-            }
-        });
+        imageCaptureView = root.findViewById(R.id.imageCaptureView);
 
         resetMapBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -233,7 +243,97 @@ public class MapTabFragment extends Fragment {
             }
         });
 
+        mapCaptureBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showLog("Clicked resetMapBtn");
+                Intent takePictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                try {
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                } catch (ActivityNotFoundException e) {
+                    // display error state to the user
+                }
+                // Ensure that there's a camera activity to handle the intent
+//                if (takePictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
+//                    // Create the File where the photo should go
+//                    File photoFile = null;
+//                    try {
+//                        photoFile = createImageFile();
+//                    } catch (IOException ex) {
+//                        ex.printStackTrace();
+//                    }
+//                    // Continue only if the File was successfully created
+//                    if (photoFile != null) {
+//                        Uri photoURI = FileProvider.getUriForFile(getContext(),
+//                                "com.example.android.fileprovider",
+//                                photoFile);
+//                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+//                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+//                        galleryAddPic();
+//                    }
+//                }
+            }
+        });
+
         return root;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
+            showLog("Reached activityResult");
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            showLog("imageBitmap: " + imageBitmap.toString());
+            imageCaptureView.setImageBitmap(imageBitmap);
+
+            File imageFile = createImageFile(imageBitmap);
+
+            // Save a file: path for use with ACTION_VIEW intents
+            currentPhotoPath = imageFile.getAbsolutePath();
+            showLog("Image Saved Source: " + currentPhotoPath);
+            showLog("Exiting activityResult");
+        }
+    }
+
+    String currentPhotoPath;
+
+    private File createImageFile(Bitmap imageBitmap) {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File imageFile = null;
+        try {
+            imageFile = File.createTempFile(
+                    imageFileName,  /* prefix */
+                    ".png",         /* suffix */
+                    storageDir      /* directory */
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
+        byte[] bitmapdata = bos.toByteArray();
+
+        //write the bytes in file
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(imageFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            fos.write(bitmapdata);
+            fos.flush();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return imageFile;
     }
 
     private void showLog(String message) {
