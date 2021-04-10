@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
@@ -37,32 +35,29 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 // Communication fragment to view messages received and send messages
-public class CommsFragment extends Fragment {
+public class CommFragment extends Fragment {
 
     //    Initialise variables
-    private static final String ARG_SECTION_NUMBER = "section_number";
-    private static final String TAG = "CommsFragment";
-
     public static final Integer RecordAudioRequestCode = 1;
+    private static final String ARG_SECTION_NUMBER = "section_number";
+    private static final String TAG = "CommFragment";
     private static GridMap gridMap;
+    private static TextView messageReceivedTextView;
+    private EditText typeBoxEditText;
     private SpeechRecognizer speechRecognizer;
     private PageViewModel pageViewModel;
 
     SharedPreferences sharedPreferences;
-
     FloatingActionButton sendFAB, voiceFAB;
-    private static TextView messageReceivedTextView;
-    private EditText typeBoxEditText;
 
     //    Setup page variables
-    public static CommsFragment newInstance(int index) {
-        CommsFragment fragment = new CommsFragment();
+    public static CommFragment newInstance(int index) {
+        CommFragment fragment = new CommFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(ARG_SECTION_NUMBER, index);
         fragment.setArguments(bundle);
         return fragment;
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -87,9 +82,15 @@ public class CommsFragment extends Fragment {
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.activity_comms, container, false);
+        View root = null;
+        if (MainActivity.colorState == 0) {
+            root = inflater.inflate(R.layout.activity_comms, container, false);
+        } else {
+            root = inflater.inflate(R.layout.activity_comms_state2, container, false);
+        }
         gridMap = MainActivity.getGridMap();
 
+//         Initialise buttons for send and voice
         sendFAB = (FloatingActionButton) root.findViewById(R.id.messageButton);
         voiceFAB = (FloatingActionButton) root.findViewById(R.id.voiceButton);
 
@@ -98,32 +99,49 @@ public class CommsFragment extends Fragment {
         messageReceivedTextView.setMovementMethod(new ScrollingMovementMethod());
         typeBoxEditText = (EditText) root.findViewById(R.id.typeBoxEditText);
 
+//         Initialise speech recognizer
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(getActivity());
         final Intent speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
 
-
 //         Retrieve shared preferences
         sharedPreferences = getActivity().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
 
+//        Handles voice recognizer
         speechRecognizer.setRecognitionListener(new RecognitionListener() {
             @Override
-            public void onReadyForSpeech(Bundle bundle) {}
+            public void onReadyForSpeech(Bundle bundle) {
+            }
+
+            @Override
+            public void onRmsChanged(float v) {
+            }
+
+            @Override
+            public void onBufferReceived(byte[] bytes) {
+            }
+
+            @Override
+            public void onEndOfSpeech() {
+            }
+
+            @Override
+            public void onError(int i) {
+            }
+
+            @Override
+            public void onPartialResults(Bundle bundle) {
+            }
+
+            @Override
+            public void onEvent(int i, Bundle bundle) {
+            }
 
             @Override
             public void onBeginningOfSpeech() {
                 typeBoxEditText.setHint("Listening...");
             }
-
-            @Override
-            public void onRmsChanged(float v) {}
-            @Override
-            public void onBufferReceived(byte[] bytes) {}
-            @Override
-            public void onEndOfSpeech() {}
-            @Override
-            public void onError(int i) {}
 
             @Override
             public void onResults(Bundle bundle) {
@@ -151,11 +169,6 @@ public class CommsFragment extends Fragment {
                 }
                 typeBoxEditText.setHint("Type something...");
             }
-
-            @Override
-            public void onPartialResults(Bundle bundle) {}
-            @Override
-            public void onEvent(int i, Bundle bundle) {}
         });
 
 //        Sends message to bluetooth sending service

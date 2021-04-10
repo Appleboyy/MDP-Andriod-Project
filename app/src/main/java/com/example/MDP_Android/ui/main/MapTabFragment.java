@@ -1,14 +1,7 @@
 package com.example.MDP_Android.ui.main;
 
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.content.Context;
-import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -34,10 +26,8 @@ import com.example.MDP_Android.R;
 
 import org.json.JSONException;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -48,19 +38,18 @@ public class MapTabFragment extends Fragment {
     //    Initialise variables
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String TAG = "MapFragment";
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final int RESULT_OK = 2;
-
     private PageViewModel pageViewModel;
+
+    public static boolean manualUpdateRequest = false;
+
+    static final int REQUEST_IMAGE_CAPTURE = 1;
 
     Button resetMapBtn, updateButton;
     ImageButton directionChangeImageBtn, exploredImageBtn, obstacleImageBtn, clearImageBtn, mapCaptureBtn;
-    ToggleButton setStartPointToggleBtn, setWaypointToggleBtn;
+    ToggleButton setStartPointToggleBtn, setWayPointToggleBtn;
     Switch manualAutoToggleBtn;
     GridMap gridMap;
-    ImageView imageCaptureView;
-    private static boolean autoUpdate = false;
-    public static boolean manualUpdateRequest = false;
+    File capturedImage;
 
     public static MapTabFragment newInstance(int index) {
         MapTabFragment fragment = new MapTabFragment();
@@ -86,14 +75,19 @@ public class MapTabFragment extends Fragment {
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.activity_map, container, false);
+        View root =  null;
+        if(MainActivity.colorState == 0) {
+            root = inflater.inflate(R.layout.activity_map, container, false);
+        } else {
+            root = inflater.inflate(R.layout.activity_map_state2, container, false);
+        }
 
         gridMap = MainActivity.getGridMap();
         final DirectionFragment directionFragment = new DirectionFragment();
 
         resetMapBtn = root.findViewById(R.id.resetMapBtn);
         setStartPointToggleBtn = root.findViewById(R.id.setStartPointToggleBtn);
-        setWaypointToggleBtn = root.findViewById(R.id.setWaypointToggleBtn);
+        setWayPointToggleBtn = root.findViewById(R.id.setWaypointToggleBtn);
         directionChangeImageBtn = root.findViewById(R.id.directionChangeImageBtn);
         exploredImageBtn = root.findViewById(R.id.exploredImageBtn);
         obstacleImageBtn = root.findViewById(R.id.obstacleImageBtn);
@@ -101,13 +95,12 @@ public class MapTabFragment extends Fragment {
         mapCaptureBtn = root.findViewById(R.id.mapCaptureBtn);
         manualAutoToggleBtn = root.findViewById(R.id.manualAutoToggleBtn);
         updateButton = root.findViewById(R.id.updateButton);
-        imageCaptureView = root.findViewById(R.id.imageCaptureView);
 
         resetMapBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showLog("Clicked resetMapBtn");
-                showToast("Reseting map...");
+                showToast("Resetting map...");
                 gridMap.resetMap();
             }
         });
@@ -120,7 +113,7 @@ public class MapTabFragment extends Fragment {
                     showToast("Cancelled selecting starting point");
                 else if (setStartPointToggleBtn.getText().equals("CANCEL") && !gridMap.getAutoUpdate()) {
                     showToast("Please select starting point");
-                    gridMap.setStartCoordStatus(true);
+                    gridMap.setStartCoordinateStatus(true);
                     gridMap.toggleCheckedBtn("setStartPointToggleBtn");
                 } else
                     showToast("Please select manual mode");
@@ -128,19 +121,19 @@ public class MapTabFragment extends Fragment {
             }
         });
 
-        setWaypointToggleBtn.setOnClickListener(new View.OnClickListener() {
+        setWayPointToggleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showLog("Clicked setWaypointToggleBtn");
-                if (setWaypointToggleBtn.getText().equals("WAYPOINT"))
+                showLog("Clicked setWayPointToggleBtn");
+                if (setWayPointToggleBtn.getText().equals("WAYPOINT"))
                     showToast("Cancelled selecting waypoint");
-                else if (setWaypointToggleBtn.getText().equals("CANCEL")) {
+                else if (setWayPointToggleBtn.getText().equals("CANCEL")) {
                     showToast("Please select waypoint");
-                    gridMap.setWaypointStatus(true);
-                    gridMap.toggleCheckedBtn("setWaypointToggleBtn");
+                    gridMap.setWayPointStatus(true);
+                    gridMap.toggleCheckedBtn("setWayPointToggleBtn");
                 } else
                     showToast("Please select manual mode");
-                showLog("Exiting setWaypointToggleBtn");
+                showLog("Exiting setWayPointToggleBtn");
             }
         });
 
@@ -202,7 +195,6 @@ public class MapTabFragment extends Fragment {
                 if (manualAutoToggleBtn.getText().equals("MANUAL")) {
                     try {
                         gridMap.setAutoUpdate(true);
-                        autoUpdate = true;
                         gridMap.toggleCheckedBtn("None");
                         updateButton.setClickable(false);
                         updateButton.setTextColor(Color.GRAY);
@@ -216,7 +208,6 @@ public class MapTabFragment extends Fragment {
                 } else if (manualAutoToggleBtn.getText().equals("AUTO")) {
                     try {
                         gridMap.setAutoUpdate(false);
-                        autoUpdate = false;
                         gridMap.toggleCheckedBtn("None");
                         updateButton.setClickable(true);
                         updateButton.setTextColor(Color.BLACK);
@@ -236,7 +227,7 @@ public class MapTabFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 showLog("Clicked updateButton");
-                GridMap.clearObstacleCoord();
+                GridMap.clearObstacleCoordinate();
                 MainActivity.printMessage("sendArena");
                 manualUpdateRequest = true;
                 showLog("Exiting updateButton");
@@ -246,93 +237,32 @@ public class MapTabFragment extends Fragment {
         mapCaptureBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showLog("Clicked resetMapBtn");
+                showLog("Clicked mapCaptureBtn");
                 Intent takePictureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                try {
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                } catch (ActivityNotFoundException e) {
-                    // display error state to the user
-                }
-                // Ensure that there's a camera activity to handle the intent
-//                if (takePictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
-//                    // Create the File where the photo should go
-//                    File photoFile = null;
-//                    try {
-//                        photoFile = createImageFile();
-//                    } catch (IOException ex) {
-//                        ex.printStackTrace();
-//                    }
-//                    // Continue only if the File was successfully created
-//                    if (photoFile != null) {
-//                        Uri photoURI = FileProvider.getUriForFile(getContext(),
-//                                "com.example.android.fileprovider",
-//                                photoFile);
-//                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-//                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-//                        galleryAddPic();
-//                    }
-//                }
+                capturedImage = tempImageFile();
+                Uri photoURI = FileProvider.getUriForFile(getContext(), "com.example.android.fileprovider", capturedImage);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                MainActivity.printMessage("Image Captured");
+                showLog("Released mapCaptureBtn");
             }
         });
 
         return root;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
-            showLog("Reached activityResult");
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            showLog("imageBitmap: " + imageBitmap.toString());
-            imageCaptureView.setImageBitmap(imageBitmap);
-
-            File imageFile = createImageFile(imageBitmap);
-
-            // Save a file: path for use with ACTION_VIEW intents
-            currentPhotoPath = imageFile.getAbsolutePath();
-            showLog("Image Saved Source: " + currentPhotoPath);
-            showLog("Exiting activityResult");
-        }
-    }
-
-    String currentPhotoPath;
-
-    private File createImageFile(Bitmap imageBitmap) {
+    private File tempImageFile() {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
+        String imageFileName = "PNG_" + timeStamp + "_";
         File storageDir = getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File imageFile = null;
         try {
-            imageFile = File.createTempFile(
-                    imageFileName,  /* prefix */
-                    ".png",         /* suffix */
-                    storageDir      /* directory */
-            );
+            imageFile = File.createTempFile(imageFileName, ".png", storageDir);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
-        byte[] bitmapdata = bos.toByteArray();
-
-        //write the bytes in file
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(imageFile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        try {
-            fos.write(bitmapdata);
-            fos.flush();
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        showLog("Image Saved Source: " + imageFile.getAbsolutePath());
         return imageFile;
     }
 

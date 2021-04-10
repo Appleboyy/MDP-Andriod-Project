@@ -26,7 +26,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.MDP_Android.ui.main.BluetoothConnectionService;
 import com.example.MDP_Android.ui.main.BluetoothDeviceConnector;
-import com.example.MDP_Android.ui.main.CommsFragment;
+import com.example.MDP_Android.ui.main.CommFragment;
 import com.example.MDP_Android.ui.main.GridMap;
 import com.example.MDP_Android.ui.main.MapTabFragment;
 import com.example.MDP_Android.ui.main.ReconfigureFragment;
@@ -45,36 +45,62 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity {
 
     // Declare Variables
+    private static final String TAG = "MainActivity";
     private static SharedPreferences sharedPreferences;
     private static SharedPreferences.Editor editor;
     private static Context context;
-
     private static GridMap gridMap;
-    static TextView xAxisTextView, yAxisTextView, directionAxisTextView, robotStatusTextView;
+    public static int colorState = 1;
+    static TextView directionAxisTextView, robotStatusTextView;
     static ImageView swipeGestureView;
     static Button f1, f2;
+
     Button reconfigure;
     ReconfigureFragment reconfigureFragment = new ReconfigureFragment();
-
     BluetoothDevice mBTDevice;
-    private static UUID myUUID;
     ProgressDialog myDialog;
-
-    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-//        Initialization
+        showLog("cState: " + colorState);
+//        Initialization with updated theme
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
-        ViewPager viewPager = findViewById(R.id.view_pager);
-        viewPager.setAdapter(sectionsPagerAdapter);
-        viewPager.setOffscreenPageLimit(9999);
-        TabLayout tabs = findViewById(R.id.tabs);
-        tabs.setupWithViewPager(viewPager);
-        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, new IntentFilter("incomingMessage"));
+        if (colorState == 0) {
+            colorState = 1;
+            setContentView(R.layout.activity_main_state2);
+            SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(getApplicationContext(), getSupportFragmentManager());
+            ViewPager viewPager = findViewById(R.id.view_pager_state2);
+            viewPager.setAdapter(sectionsPagerAdapter);
+            viewPager.setOffscreenPageLimit(9999);
+            TabLayout tabs = findViewById(R.id.tabs_state2);
+            tabs.setupWithViewPager(viewPager);
+            if (Build.VERSION.SDK_INT >= 21) {
+                Window window = this.getWindow();
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    window.setStatusBarColor(this.getResources().getColor(R.color.colorBlue));
+                }
+            }
+        } else {
+            colorState = 0;
+            setContentView(R.layout.activity_main);
+            SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(getApplicationContext(), getSupportFragmentManager());
+            ViewPager viewPager = findViewById(R.id.view_pager);
+            viewPager.setAdapter(sectionsPagerAdapter);
+            viewPager.setOffscreenPageLimit(9999);
+            TabLayout tabs = findViewById(R.id.tabs);
+            tabs.setupWithViewPager(viewPager);
+            if (Build.VERSION.SDK_INT >= 21) {
+                Window window = this.getWindow();
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    window.setStatusBarColor(this.getResources().getColor(R.color.colorPrimary));
+                }
+            }
+        }
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(messageReceiver, new IntentFilter("incomingMessage"));
 
 //       Set up sharedPreferences
         MainActivity.context = getApplicationContext();
@@ -91,11 +117,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String message = "Explored : " + GridMap.getPublicMDFExploration();
                 editor = sharedPreferences.edit();
-                editor.putString("message", CommsFragment.getMessageReceivedTextView().getText() + "\n" + message);
+                editor.putString("message", CommFragment.getMessageReceivedTextView().getText() + "\n" + message);
                 editor.commit();
                 refreshMessageReceived();
                 message = "Obstacle : " + GridMap.getPublicMDFObstacle() + "0";
-                editor.putString("message", CommsFragment.getMessageReceivedTextView().getText() + "\n" + message);
+                editor.putString("message", CommFragment.getMessageReceivedTextView().getText() + "\n" + message);
                 editor.commit();
                 refreshMessageReceived();
             }
@@ -108,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String message = "Images Captured: " + GridMap.getPublicImagesString().toString();
                 editor = sharedPreferences.edit();
-                editor.putString("message", CommsFragment.getMessageReceivedTextView().getText() + "\n" + message);
+                editor.putString("message", CommFragment.getMessageReceivedTextView().getText() + "\n" + message);
                 editor.commit();
                 refreshMessageReceived();
             }
@@ -124,15 +150,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button stateButton = findViewById(R.id.stateButton);
+        stateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLog("stateBtn Click: " + colorState);
+                Intent i = new Intent(MainActivity.this, MainActivity.class);
+                finish();
+                overridePendingTransition(0, 0);
+                startActivity(i);
+                overridePendingTransition(0, 0);
+            }
+        });
 
 //       Initialise  Map
         gridMap = new GridMap(this);
         gridMap = findViewById(R.id.mapView);
-//        Initialise TextView to show X & Y axis
-//        xAxisTextView = findViewById(R.id.xAxisTextView);
-//        yAxisTextView = findViewById(R.id.yAxisTextView);
-//        Initialise TextView to show Direction
-//        directionAxisTextView = findViewById(R.id.directionAxisTextView);
+
 //        Initialise TextView to show RobotStatus
         robotStatusTextView = findViewById(R.id.robotStatusTextView);
         swipeGestureView = findViewById(R.id.swipeGestureView);
@@ -203,7 +237,6 @@ public class MainActivity extends AppCompatActivity {
             public void onSwipeTop() {
                 if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("forward");
-//                    MainActivity.refreshLabel();
                     if (gridMap.getValidPosition()) {
                         gridMap.printRobotStatus("moving forward");
                     } else {
@@ -211,24 +244,26 @@ public class MainActivity extends AppCompatActivity {
                     }
                     MainActivity.printMessage("w");
                 }
-//                Toast.makeText(context, "top", Toast.LENGTH_SHORT).show();
-            };
+            }
+
+            ;
+
             public void onSwipeRight() {
                 if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("right");
                     MainActivity.printMessage("d");
                     gridMap.printRobotStatus("turning right");
                 }
-//                Toast.makeText(context, "right", Toast.LENGTH_SHORT).show();
             }
+
             public void onSwipeLeft() {
                 if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("left");
                     MainActivity.printMessage("a");
                     gridMap.printRobotStatus("turning left");
                 }
-//                Toast.makeText(context, "left", Toast.LENGTH_SHORT).show();
             }
+
             public void onSwipeBottom() {
                 if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("back");
@@ -239,18 +274,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                     MainActivity.printMessage("TAKE");
                 }
-//                Toast.makeText(context, "bottom", Toast.LENGTH_SHORT).show();
             }
         });
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            Window window = this.getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                window.setStatusBarColor(this.getResources().getColor(R.color.colorPrimary));
-            }
-        }
     }
 
     public static Button getF1() {
@@ -283,7 +309,7 @@ public class MainActivity extends AppCompatActivity {
             byte[] bytes = message.getBytes(Charset.defaultCharset());
             BluetoothConnectionService.write(bytes);
         }
-        editor.putString("message", CommsFragment.getMessageReceivedTextView().getText() + "\n\n" + message);
+        editor.putString("message", CommFragment.getMessageReceivedTextView().getText() + "\n\n" + message);
         editor.commit();
         refreshMessageReceived();
         showLog("Exiting printMessage");
@@ -303,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
                 message = "Unexpected printMessage by: " + name;
                 break;
         }
-        editor.putString("message", CommsFragment.getMessageReceivedTextView().getText() + "\n\n" + message);
+        editor.putString("message", CommFragment.getMessageReceivedTextView().getText() + "\n\n" + message);
         editor.commit();
         refreshMessageReceived();
         if (BluetoothConnectionService.BluetoothConnectionStatus == true) {
@@ -315,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
 
     //        Update communication box output
     public static void refreshMessageReceived() {
-        CommsFragment.getMessageReceivedTextView().setText(sharedPreferences.getString("message", ""));
+        CommFragment.getMessageReceivedTextView().setText(sharedPreferences.getString("message", ""));
     }
 
     //        Update Direction
@@ -324,13 +350,6 @@ public class MainActivity extends AppCompatActivity {
         directionAxisTextView.setText(sharedPreferences.getString("direction", ""));
         printMessage("Direction is set to " + direction);
     }
-
-    //        Update X & Y axis label
-//    public static void refreshLabel() {
-//        xAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[0] - 1));
-//        yAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[1] - 1));
-//        directionAxisTextView.setText(sharedPreferences.getString("direction", ""));
-//    }
 
     //        Update received messages to communication box
     public static void receiveMessage(String message) {
@@ -487,7 +506,7 @@ public class MainActivity extends AppCompatActivity {
             case 1:
                 if (resultCode == Activity.RESULT_OK) {
                     mBTDevice = (BluetoothDevice) data.getExtras().getParcelable("mBTDevice");
-                    myUUID = (UUID) data.getSerializableExtra("myUUID");
+                    UUID myUUID = (UUID) data.getSerializableExtra("myUUID");
                 }
         }
     }

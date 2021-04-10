@@ -36,23 +36,20 @@ public class ControlFragment extends Fragment implements SensorEventListener {
     // Initialise variables
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String TAG = "ControlFragment";
+    private static long exploreTimer, fastestTimer;
+    private static GridMap gridMap;
     private PageViewModel pageViewModel;
+    private Sensor sensor;
+    private SensorManager sensorManager;
+
+    static Button calibrateButton;
+    static Handler timerHandler = new Handler();
 
     SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
-
     ImageButton moveForwardImageBtn, turnRightImageBtn, moveBackImageBtn, turnLeftImageBtn, exploreResetButton, fastestResetButton;
-    private static long exploreTimer, fastestTimer;
     ToggleButton exploreButton, fastestButton, imageButton;
     TextView exploreTimeTextView, fastestTimeTextView, robotStatusTextView;
     Switch phoneTiltSwitch;
-    static Button calibrateButton;
-    private static GridMap gridMap;
-
-    private Sensor mSensor;
-    private SensorManager mSensorManager;
-
-    static Handler timerHandler = new Handler();
 
     Runnable timerRunnableExplore = new Runnable() {
         @Override
@@ -63,7 +60,6 @@ public class ControlFragment extends Fragment implements SensorEventListener {
             secondsExplore = secondsExplore % 60;
 
             exploreTimeTextView.setText(String.format("%02d:%02d", minutesExplore, secondsExplore));
-
             timerHandler.postDelayed(this, 500);
         }
     };
@@ -77,7 +73,6 @@ public class ControlFragment extends Fragment implements SensorEventListener {
             secondsFastest = secondsFastest % 60;
 
             fastestTimeTextView.setText(String.format("%02d:%02d", minutesFastest, secondsFastest));
-
             timerHandler.postDelayed(this, 500);
         }
     };
@@ -106,8 +101,12 @@ public class ControlFragment extends Fragment implements SensorEventListener {
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-
-        View root = inflater.inflate(R.layout.activity_control, container, false);
+        View root = null;
+        if (MainActivity.colorState == 0) {
+            root = inflater.inflate(R.layout.activity_control, container, false);
+        } else {
+            root = inflater.inflate(R.layout.activity_control_state2, container, false);
+        }
 
         sharedPreferences = getActivity().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
 
@@ -129,8 +128,8 @@ public class ControlFragment extends Fragment implements SensorEventListener {
         fastestTimer = 0;
         exploreTimer = 0;
 
-        mSensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
+        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         gridMap = MainActivity.getGridMap();
 
@@ -143,7 +142,6 @@ public class ControlFragment extends Fragment implements SensorEventListener {
                     updateStatus("Please press 'MANUAL'");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("forward");
-//                    MainActivity.refreshLabel();
                     if (gridMap.getValidPosition()) {
                         updateStatus("moving forward");
                         gridMap.printRobotStatus("moving forward");
@@ -166,7 +164,6 @@ public class ControlFragment extends Fragment implements SensorEventListener {
                     updateStatus("Please press 'MANUAL'");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("right");
-//                    MainActivity.refreshLabel();
                     MainActivity.printMessage("d");
                     gridMap.printRobotStatus("turning right");
                 } else
@@ -183,7 +180,6 @@ public class ControlFragment extends Fragment implements SensorEventListener {
                     updateStatus("Please press 'MANUAL'");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("back");
-//                    MainActivity.refreshLabel();
                     if (gridMap.getValidPosition()) {
                         updateStatus("moving backward");
                         gridMap.printRobotStatus("reversing");
@@ -206,7 +202,6 @@ public class ControlFragment extends Fragment implements SensorEventListener {
                     updateStatus("Please press 'MANUAL'");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("left");
-//                    MainActivity.refreshLabel();
                     updateStatus("turning left");
                     MainActivity.printMessage("a");
                     gridMap.printRobotStatus("turning left");
@@ -316,14 +311,13 @@ public class ControlFragment extends Fragment implements SensorEventListener {
                     if (phoneTiltSwitch.isChecked()) {
                         showToast("Tilt motion control: ON");
                         phoneTiltSwitch.setPressed(true);
-
-                        mSensorManager.registerListener(ControlFragment.this, mSensor, mSensorManager.SENSOR_DELAY_NORMAL);
+                        sensorManager.registerListener(ControlFragment.this, sensor, sensorManager.SENSOR_DELAY_NORMAL);
                         sensorHandler.post(sensorDelay);
                     } else {
                         showToast("Tilt motion control: OFF");
                         showLog("unregistering Sensor Listener");
                         try {
-                            mSensorManager.unregisterListener(ControlFragment.this);
+                            sensorManager.unregisterListener(ControlFragment.this);
                         } catch (IllegalArgumentException e) {
                             e.printStackTrace();
                         }
@@ -362,8 +356,8 @@ public class ControlFragment extends Fragment implements SensorEventListener {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
-    Handler sensorHandler = new Handler();
     boolean sensorFlag = false;
+    Handler sensorHandler = new Handler();
 
     private final Runnable sensorDelay = new Runnable() {
         @Override
@@ -387,22 +381,18 @@ public class ControlFragment extends Fragment implements SensorEventListener {
             if (y < -2) {
                 showLog("Sensor Move Forward Detected");
                 gridMap.moveRobot("forward");
-//                MainActivity.refreshLabel();
                 MainActivity.printMessage("w");
             } else if (y > 2) {
                 showLog("Sensor Move Backward Detected");
                 gridMap.moveRobot("back");
-//                MainActivity.refreshLabel();
                 MainActivity.printMessage("s");
             } else if (x > 2) {
                 showLog("Sensor Move Left Detected");
                 gridMap.moveRobot("left");
-//                MainActivity.refreshLabel();
                 MainActivity.printMessage("a");
             } else if (x < -2) {
                 showLog("Sensor Move Right Detected");
                 gridMap.moveRobot("right");
-//                MainActivity.refreshLabel();
                 MainActivity.printMessage("d");
             }
         }
@@ -417,7 +407,7 @@ public class ControlFragment extends Fragment implements SensorEventListener {
     public void onDestroy() {
         super.onDestroy();
         try {
-            mSensorManager.unregisterListener(ControlFragment.this);
+            sensorManager.unregisterListener(ControlFragment.this);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }

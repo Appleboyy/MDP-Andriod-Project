@@ -30,7 +30,7 @@ public class GridView extends View {
     public static float cellSize;
     public static JSONObject mapJsonObject;
     public static Cell[][] cells;
-    private ArrayList<String[]> arrowCoord = new ArrayList<>();
+    private ArrayList<String[]> arrowCoordinate = new ArrayList<>();
     Bitmap arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_error);
 
     private String exploredString = "";
@@ -41,7 +41,7 @@ public class GridView extends View {
     private Paint blackPaint = new Paint();
     private Paint whitePaint = new Paint();
     private Paint obstacleColor = new Paint();
-    private Paint waypointColor = new Paint();
+    private Paint wayPointColor = new Paint();
     private Paint unexploredColor = new Paint();
     private Paint exploredColor = new Paint();
     private Paint arrowColor = new Paint();
@@ -49,24 +49,24 @@ public class GridView extends View {
 
     public GridView(Context context) {
         super(context);
-        init(null);
+        init();
     }
 
     //    Setup page variables
     public GridView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init(attrs);
+        init();
         blackPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         whitePaint.setColor(Color.WHITE);
         obstacleColor.setColor(Color.BLACK);
-        waypointColor.setColor(Color.YELLOW);
+        wayPointColor.setColor(Color.YELLOW);
         unexploredColor.setColor(Color.LTGRAY);
         exploredColor.setColor(Color.WHITE);
         arrowColor.setColor(Color.BLACK);
         fastestPathColor.setColor(Color.MAGENTA);
     }
 
-    private void init(@Nullable AttributeSet attrs) {
+    private void init() {
         setWillNotDraw(false);
     }
 
@@ -74,19 +74,19 @@ public class GridView extends View {
         return (20 - row);
     }
 
-//    Create or update map
+    //    Create or update map
     @Override
     protected void onDraw(Canvas canvas) {
         showLog("Entering onDraw");
         super.onDraw(canvas);
         showLog("Redrawing map");
 
-        ArrayList<String[]> arrowCoord = this.getArrowCoord();
+        ArrayList<String[]> arrowCoordinate = this.getArrowCoordinate();
 
         if (!mapDrawn) {
             canvas.drawColor(Color.WHITE);
-            String[] dummyArrowCoord = new String[]{};
-            this.getArrowCoord().add(dummyArrowCoord);
+            String[] dummyArrowCoordinate = new String[]{};
+            this.getArrowCoordinate().add(dummyArrowCoordinate);
             this.createCell();
             mapDrawn = true;
         }
@@ -113,13 +113,13 @@ public class GridView extends View {
 
         if (plotObstacle) {
             this.drawObstacle(canvas);
-            this.drawArrow(canvas, arrowCoord);
+            this.drawArrow(canvas, arrowCoordinate);
         }
 
         showLog("Exiting onDraw");
     }
 
-//    Create each grid in map
+    //    Create each grid in map
     public void createCell() {
         showLog("Entering cellCreate");
         cells = new Cell[COL + 1][ROW + 1];
@@ -131,7 +131,7 @@ public class GridView extends View {
         showLog("Exiting createCell");
     }
 
-//    Set various grid info based on mapJSONObject input
+    //    Set various grid info based on mapJSONObject input
     private void setMap(JSONObject mapJsonObject) throws JSONException {
         showLog("Entering setMap");
         this.mapJsonObject = mapJsonObject;
@@ -175,7 +175,7 @@ public class GridView extends View {
                     infoJsonArray = mapJsonObject.getJSONArray("waypoint");
                     infoJsonObject = infoJsonArray.getJSONObject(0);
                     cells[infoJsonObject.getInt("x")][20 - infoJsonObject.getInt("y")].setType("waypoint");
-                    message = "Waypoint:  " + String.valueOf(infoJsonObject.getInt("x")) + String.valueOf(infoJsonObject.getInt("y"));
+                    message = "Waypoint:  " + infoJsonObject.getInt("x") + infoJsonObject.getInt("y");
                     break;
                 case "arrow":
                     infoJsonArray = mapJsonObject.getJSONArray("arrow");
@@ -183,7 +183,7 @@ public class GridView extends View {
                         infoJsonObject = infoJsonArray.getJSONObject(j);
                         if (!infoJsonObject.getString("face").equals("dummy")) {
                             this.setArrowCoordinate(infoJsonObject.getInt("x"), infoJsonObject.getInt("y"), infoJsonObject.getString("face"));
-                            message = "Arrow:  " + String.valueOf(infoJsonObject.getInt("x")) + String.valueOf(infoJsonObject.getInt("y")) + infoJsonObject.getString("face");
+                            message = "Arrow:  " + infoJsonObject.getInt("x") + infoJsonObject.getInt("y") + infoJsonObject.getString("face");
                         }
                     }
                     break;
@@ -202,20 +202,20 @@ public class GridView extends View {
         arrowCoord[0] = String.valueOf(col);
         arrowCoord[1] = String.valueOf(row);
         arrowCoord[2] = arrowDirection;
-        this.getArrowCoord().add(arrowCoord);
+        this.getArrowCoordinate().add(arrowCoord);
 
         showLog("Exiting setArrowCoordinate");
     }
 
-    private ArrayList<String[]> getArrowCoord() {
-        return this.arrowCoord;
+    private ArrayList<String[]> getArrowCoordinate() {
+        return this.arrowCoordinate;
     }
 
     private void drawIndividualCell(Canvas canvas) {
         showLog("Entering drawIndividualCell");
         for (int x = 1; x <= COL; x++)
             for (int y = 0; y < ROW; y++)
-                for (int i = 0; i < this.getArrowCoord().size(); i++)
+                for (int i = 0; i < this.getArrowCoordinate().size(); i++)
                     canvas.drawRect(cells[x][y].startX, cells[x][y].startY, cells[x][y].endX, cells[x][y].endY, cells[x][y].paint);
 
         showLog("Exiting drawIndividualCell");
@@ -322,7 +322,7 @@ public class GridView extends View {
                     this.paint = obstacleColor;
                     break;
                 case "waypoint":
-                    this.paint = waypointColor;
+                    this.paint = wayPointColor;
                     break;
                 case "unexplored":
                     this.paint = unexploredColor;
@@ -337,7 +337,7 @@ public class GridView extends View {
                     this.paint = fastestPathColor;
                     break;
                 default:
-                    showLog("setTtype default: " + type);
+                    showLog("setType default: " + type);
                     break;
             }
         }

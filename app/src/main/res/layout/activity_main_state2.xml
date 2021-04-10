@@ -27,7 +27,7 @@
             android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
+            android:background="@color/colorBlue"
             android:orientation="horizontal">
 
             <TextView
@@ -175,7 +175,7 @@
                 android:scrollbars="vertical"
                 android:text="Not Available"
                 android:textAlignment="center"
-                android:textColor="@color/colorPrimaryDark"
+                android:textColor="@color/colorBlue"
                 android:textSize="15sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.574"
@@ -189,7 +189,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="8dp"
-                android:background="@color/colorPrimary"
+                android:background="@color/colorBlue"
                 android:text="Robot Status"
                 android:textAlignment="center"
                 android:textSize="15sp"
@@ -241,16 +241,16 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.viewpager.widget.ViewPager
-            android:id="@+id/view_pager"
+            android:id="@+id/view_pager_state2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" >
 
             <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tabs"
+                android:id="@+id/tabs_state2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?attr/colorPrimary"
+                android:background="@color/colorBlue"
                 app:tabGravity="fill"/>
         </androidx.viewpager.widget.ViewPager>
 

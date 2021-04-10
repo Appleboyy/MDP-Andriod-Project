@@ -7,7 +7,9 @@
 
     <!--         added permission for bluetooth connection & camera use -->
     <uses-feature android:name="android.hardware.bluetooth" />
-    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -16,8 +18,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -41,6 +43,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.example.MDP_Android.ui.main.BluetoothDeviceConnector" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.android.fileprovider"

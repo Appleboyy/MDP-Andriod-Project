@@ -30,7 +30,7 @@ public class ReconfigureFragment extends DialogFragment {
     Button saveBtn, cancelReconfigureBtn;
     EditText f1ValueEditText, f2ValueEditText;
     String f1Value, f2Value;
-    View rootView, commsView;
+    View rootView, commView;
 
     //    Setup section variables
     @Nullable
@@ -38,7 +38,7 @@ public class ReconfigureFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         showLog("Entering onCreateView");
         rootView = inflater.inflate(R.layout.activity_reconfigure, container, false);
-        commsView = inflater.inflate(R.layout.activity_comms, container, false);
+        commView = inflater.inflate(R.layout.activity_comms, container, false);
 
         super.onCreate(savedInstanceState);
 
@@ -89,12 +89,12 @@ public class ReconfigureFragment extends DialogFragment {
         cancelReconfigureBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showLog("Clicked cancel ReconfigureationBtn");
+                showLog("Clicked cancel ReconfigurationBtn");
                 if (sharedPreferences.contains("F1"))
                     f1ValueEditText.setText(sharedPreferences.getString("F1", ""));
                 if (sharedPreferences.contains("F2"))
                     f2ValueEditText.setText(sharedPreferences.getString("F2", ""));
-                showLog("Exiting cancel ReconfigureationBtn");
+                showLog("Exiting cancel ReconfigurationBtn");
                 getDialog().dismiss();
             }
         });
@@ -111,7 +111,6 @@ public class ReconfigureFragment extends DialogFragment {
         if (f2Value != null && !f2Value.equals(""))
             MainActivity.getF2().setContentDescription(f2Value);
         f1ValueEditText.clearFocus();
-
         showLog("Exiting onDismiss");
     }
 

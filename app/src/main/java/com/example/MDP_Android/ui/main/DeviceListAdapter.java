@@ -16,34 +16,33 @@ import java.util.ArrayList;
 public class DeviceListAdapter extends ArrayAdapter<BluetoothDevice> {
 
     // Initialise variables
-    private LayoutInflater mLayoutInflater;
+    private LayoutInflater layoutInflater;
     private ArrayList<BluetoothDevice> myDevices;
-    private int mViewResourceId;
+    private int viewResourceID;
 
     //    Setup page variables
     public DeviceListAdapter(Context context, int tvResourceId, ArrayList<BluetoothDevice> devices) {
         super(context, tvResourceId, devices);
         this.myDevices = devices;
-        mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mViewResourceId = tvResourceId;
+        layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        viewResourceID = tvResourceId;
     }
 
     //    Bluetooth devices information
     public View getView(int position, View convertView, ViewGroup parent) {
         Log.d("DeviceListAdapter", "Getting View");
-        convertView = mLayoutInflater.inflate(mViewResourceId, null);
-
+        convertView = layoutInflater.inflate(viewResourceID, null);
         BluetoothDevice device = myDevices.get(position);
 
         if (device != null) {
             TextView deviceName = (TextView) convertView.findViewById(R.id.deviceName);
-            TextView deviceAdress = (TextView) convertView.findViewById(R.id.deviceAddress);
+            TextView deviceAddress = (TextView) convertView.findViewById(R.id.deviceAddress);
 
             if (deviceName != null) {
                 deviceName.setText(device.getName());
             }
-            if (deviceAdress != null) {
-                deviceAdress.setText(device.getAddress());
+            if (deviceAddress != null) {
+                deviceAddress.setText(device.getAddress());
             }
         }
 

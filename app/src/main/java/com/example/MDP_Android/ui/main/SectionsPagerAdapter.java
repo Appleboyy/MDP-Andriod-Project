@@ -10,7 +10,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.MDP_Android.R;
 
-// Adapter to control CommsFragment, MapTabFragment & ControlFragment
+// Adapter to control CommFragment, MapTabFragment & ControlFragment
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     //    Initialise variables
@@ -29,7 +29,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return CommsFragment.newInstance(position + 1);
+                return CommFragment.newInstance(position + 1);
             case 1:
                 return MapTabFragment.newInstance(position + 1);
             case 2:
@@ -47,7 +47,6 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        // Show 3 total pages.
         return 3;
     }
 }
