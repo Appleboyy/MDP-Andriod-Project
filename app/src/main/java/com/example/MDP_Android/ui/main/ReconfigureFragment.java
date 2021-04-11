@@ -24,9 +24,9 @@ public class ReconfigureFragment extends DialogFragment {
 
     //    Initialise variables
     private static final String TAG = "ReconfigureFragment";
+
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-
     Button saveBtn, cancelReconfigureBtn;
     EditText f1ValueEditText, f2ValueEditText;
     String f1Value, f2Value;
@@ -39,16 +39,13 @@ public class ReconfigureFragment extends DialogFragment {
         showLog("Entering onCreateView");
         rootView = inflater.inflate(R.layout.activity_reconfigure, container, false);
         commView = inflater.inflate(R.layout.activity_comms, container, false);
-
         super.onCreate(savedInstanceState);
-
         getDialog().setTitle("Reconfiguration");
 
         saveBtn = rootView.findViewById(R.id.saveBtn);
         cancelReconfigureBtn = rootView.findViewById(R.id.cancelReconfigureBtn);
         f1ValueEditText = rootView.findViewById(R.id.f1ValueEditText);
         f2ValueEditText = rootView.findViewById(R.id.f2ValueEditText);
-
         sharedPreferences = getActivity().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
 
         if (sharedPreferences.contains("F1")) {

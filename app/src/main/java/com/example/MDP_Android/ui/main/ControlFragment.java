@@ -127,10 +127,8 @@ public class ControlFragment extends Fragment implements SensorEventListener {
         robotStatusTextView = MainActivity.getRobotStatusTextView();
         fastestTimer = 0;
         exploreTimer = 0;
-
         sensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-
         gridMap = MainActivity.getGridMap();
 
         // Robot control button listeners
@@ -290,7 +288,7 @@ public class ControlFragment extends Fragment implements SensorEventListener {
             @Override
             public void onClick(View v) {
                 showLog("Clicked fastestResetImageBtn");
-                showToast("Reseting fastest time...");
+                showToast("Resetting fastest time...");
                 fastestTimeTextView.setText("00:00");
                 robotStatusTextView.setText("Not Available");
                 if (fastestButton.isChecked())

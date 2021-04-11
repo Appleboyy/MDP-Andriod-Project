@@ -40,20 +40,21 @@ import org.json.JSONObject;
 
 import java.math.BigInteger;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
     // Declare Variables
+    public static int colorState = 1;
+
     private static final String TAG = "MainActivity";
     private static SharedPreferences sharedPreferences;
     private static SharedPreferences.Editor editor;
     private static Context context;
     private static GridMap gridMap;
-    public static int colorState = 1;
-    static TextView directionAxisTextView, robotStatusTextView;
-    static ImageView swipeGestureView;
-    static Button f1, f2;
+    private static TextView directionAxisTextView, robotStatusTextView;
+    private static Button f1, f2;
 
     Button reconfigure;
     ReconfigureFragment reconfigureFragment = new ReconfigureFragment();
@@ -63,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         showLog("cState: " + colorState);
+
 //        Initialization with updated theme
         super.onCreate(savedInstanceState);
         if (colorState == 0) {
@@ -74,14 +76,10 @@ public class MainActivity extends AppCompatActivity {
             viewPager.setOffscreenPageLimit(9999);
             TabLayout tabs = findViewById(R.id.tabs_state2);
             tabs.setupWithViewPager(viewPager);
-            if (Build.VERSION.SDK_INT >= 21) {
-                Window window = this.getWindow();
-                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    window.setStatusBarColor(this.getResources().getColor(R.color.colorBlue));
-                }
-            }
+            Window window = this.getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(this.getResources().getColor(R.color.colorBlue));
         } else {
             colorState = 0;
             setContentView(R.layout.activity_main);
@@ -91,14 +89,10 @@ public class MainActivity extends AppCompatActivity {
             viewPager.setOffscreenPageLimit(9999);
             TabLayout tabs = findViewById(R.id.tabs);
             tabs.setupWithViewPager(viewPager);
-            if (Build.VERSION.SDK_INT >= 21) {
-                Window window = this.getWindow();
-                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    window.setStatusBarColor(this.getResources().getColor(R.color.colorPrimary));
-                }
-            }
+            Window window = this.getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(this.getResources().getColor(R.color.colorPrimary));
         }
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(messageReceiver, new IntentFilter("incomingMessage"));
 
@@ -118,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
                 String message = "Explored : " + GridMap.getPublicMDFExploration();
                 editor = sharedPreferences.edit();
                 editor.putString("message", CommFragment.getMessageReceivedTextView().getText() + "\n" + message);
-                editor.commit();
+                editor.apply();
                 refreshMessageReceived();
                 message = "Obstacle : " + GridMap.getPublicMDFObstacle() + "0";
                 editor.putString("message", CommFragment.getMessageReceivedTextView().getText() + "\n" + message);
@@ -135,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
                 String message = "Images Captured: " + GridMap.getPublicImagesString().toString();
                 editor = sharedPreferences.edit();
                 editor.putString("message", CommFragment.getMessageReceivedTextView().getText() + "\n" + message);
-                editor.commit();
+                editor.apply();
                 refreshMessageReceived();
             }
         });
@@ -169,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        Initialise TextView to show RobotStatus
         robotStatusTextView = findViewById(R.id.robotStatusTextView);
-        swipeGestureView = findViewById(R.id.swipeGestureView);
+        ImageView swipeGestureView = findViewById(R.id.swipeGestureView);
 
 //        Initialise ProgressDialog for possible Bluetooth reconnection
         myDialog = new ProgressDialog(MainActivity.this);
@@ -246,8 +240,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            ;
-
             public void onSwipeRight() {
                 if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("right");
@@ -305,12 +297,12 @@ public class MainActivity extends AppCompatActivity {
         showLog("Entering printMessage");
         editor = sharedPreferences.edit();
 
-        if (BluetoothConnectionService.BluetoothConnectionStatus == true) {
+        if (BluetoothConnectionService.BluetoothConnectionStatus) {
             byte[] bytes = message.getBytes(Charset.defaultCharset());
             BluetoothConnectionService.write(bytes);
         }
         editor.putString("message", CommFragment.getMessageReceivedTextView().getText() + "\n\n" + message);
-        editor.commit();
+        editor.apply();
         refreshMessageReceived();
         showLog("Exiting printMessage");
     }
@@ -321,18 +313,15 @@ public class MainActivity extends AppCompatActivity {
         editor = sharedPreferences.edit();
         String message;
 
-        switch (name) {
-            case "waypoint":
-                message = "WP:" + x + ":" + y;
-                break;
-            default:
-                message = "Unexpected printMessage by: " + name;
-                break;
+        if (name.equals("waypoint")) {
+            message = "WP:" + x + ":" + y;
+        } else {
+            message = "Unexpected printMessage by: " + name;
         }
         editor.putString("message", CommFragment.getMessageReceivedTextView().getText() + "\n\n" + message);
-        editor.commit();
+        editor.apply();
         refreshMessageReceived();
-        if (BluetoothConnectionService.BluetoothConnectionStatus == true) {
+        if (BluetoothConnectionService.BluetoothConnectionStatus) {
             byte[] bytes = message.getBytes(Charset.defaultCharset());
             BluetoothConnectionService.write(bytes);
         }
@@ -448,8 +437,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
 //            Decode image id sent from rPI
-            for (int i = 0; i < messageSplit.length; i++) {
-                showLog("Image Tests: " + messageSplit[i]);
+            for (String s : messageSplit) {
+                showLog("Image Tests: " + s);
             }
             try {
                 if (messageSplit[1].equals("image")) {
@@ -480,7 +469,7 @@ public class MainActivity extends AppCompatActivity {
                 if (messageSplit[1].equals("status")) {
                     try {
                         String[] splitStatusMsg = message.split("\"");
-                        showLog("updateRobotStatus: " + splitStatusMsg.toString());
+                        showLog("updateRobotStatus: " + Arrays.toString(splitStatusMsg));
                         gridMap.printRobotStatus(splitStatusMsg[3]);
                         showLog("statusReceived: robot status updated");
                     } catch (Exception e) {
@@ -501,13 +490,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        switch (requestCode) {
-            case 1:
-                if (resultCode == Activity.RESULT_OK) {
-                    mBTDevice = (BluetoothDevice) data.getExtras().getParcelable("mBTDevice");
-                    UUID myUUID = (UUID) data.getSerializableExtra("myUUID");
-                }
+        if (requestCode == 1) {
+            if (resultCode == Activity.RESULT_OK) {
+                mBTDevice = data.getExtras().getParcelable("mBTDevice");
+            }
         }
     }
 

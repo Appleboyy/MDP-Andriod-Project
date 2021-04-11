@@ -44,6 +44,10 @@ public class GridMap extends View {
     //     Declare Variables
     SharedPreferences sharedPreferences;
 
+    public static String publicMDFExploration;
+    public static String publicMDFObstacle;
+    public static ArrayList<String> publicImagesString = new ArrayList<>();
+
     private Paint blackPaint = new Paint();
     private Paint obstacleColor = new Paint();
     private Paint robotColor = new Paint();
@@ -82,10 +86,6 @@ public class GridMap extends View {
     private boolean mapDrawn = false;
 
     private Bitmap arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_error);
-
-    public static String publicMDFExploration;
-    public static String publicMDFObstacle;
-    public static ArrayList<String> publicImagesString = new ArrayList<>();
 
     //    Setup page variables
     public GridMap(Context context, @Nullable AttributeSet attrs) {
@@ -367,7 +367,6 @@ public class GridMap extends View {
         curCoordinate[0] = col;
         curCoordinate[1] = row;
         this.setRobotDirection(direction);
-//        this.updateRobotAxis(col, row, direction);
 
         row = this.convertRow(row);
         for (int x = col - 1; x <= col + 1; x++)
@@ -443,7 +442,6 @@ public class GridMap extends View {
         showLog("Entering setWayPointCoordinate");
         wayPointCoordinate[0] = col;
         wayPointCoordinate[1] = row;
-
         row = this.convertRow(row);
         cells[col][row].setType("waypoint");
 
@@ -736,9 +734,8 @@ public class GridMap extends View {
         String hexStringExplored, hexStringObstacle, exploredString, obstacleString;
         BigInteger hexBigIntegerExplored, hexBigIntegerObstacle;
         String message;
-        String robotCenter = null;
-        int exploredCount = 9;
-        List<Integer> roboCenterlist = new ArrayList<Integer>();
+        String robotCenter;
+        List<Integer> robotCenterList = new ArrayList<Integer>();
 
         if (mapInformation == null)
             return;
@@ -763,7 +760,6 @@ public class GridMap extends View {
                         String s = String.valueOf(exploredString.charAt(j + 2));
                         if (s.equals("1") && !cells[x][y].type.equals("robot")) {
                             cells[x][y].setType("explored");
-                            exploredCount++;
                         } else if (s.equals("0") && !cells[x][y].type.equals("robot"))
                             cells[x][y].setType("unexplored");
                     }
@@ -820,12 +816,12 @@ public class GridMap extends View {
                     String[] splitRobotCenter = robotCenter.replace(" ", "").split(",|\\(|\\)");
                     showLog("splits: " + splitRobotCenter[0] + ", " + splitRobotCenter[1]);
 
-                    roboCenterlist = new ArrayList<Integer>();
+                    robotCenterList = new ArrayList<Integer>();
                     Matcher robotCenterMatcher = Pattern.compile("\\d+").matcher(robotCenter);
                     while (robotCenterMatcher.find()) {
-                        roboCenterlist.add(Integer.parseInt(robotCenterMatcher.group()));
+                        robotCenterList.add(Integer.parseInt(robotCenterMatcher.group()));
                     }
-                    this.setStartCoordinate(Integer.parseInt(String.valueOf(roboCenterlist.get(0))), Integer.parseInt(String.valueOf(roboCenterlist.get(1))));
+                    this.setStartCoordinate(Integer.parseInt(String.valueOf(robotCenterList.get(0))), Integer.parseInt(String.valueOf(robotCenterList.get(1))));
                     canDrawRobot = true;
                     break;
                 case "heading":
@@ -844,7 +840,7 @@ public class GridMap extends View {
                         robotHead = "up";
                     }
                     showLog("robotHead: " + robotHead);
-                    this.setCurCoordinate(Integer.parseInt(String.valueOf(roboCenterlist.get(0))) + 1, Integer.parseInt(String.valueOf(roboCenterlist.get(1))) + 1, robotHead);
+                    this.setCurCoordinate(Integer.parseInt(String.valueOf(robotCenterList.get(0))) + 1, Integer.parseInt(String.valueOf(robotCenterList.get(1))) + 1, robotHead);
                     canDrawRobot = true;
                     break;
                 case "waypoint":
@@ -1053,6 +1049,4 @@ public class GridMap extends View {
     public static ArrayList<String> getPublicImagesString() {
         return publicImagesString;
     }
-
-    ;
 }

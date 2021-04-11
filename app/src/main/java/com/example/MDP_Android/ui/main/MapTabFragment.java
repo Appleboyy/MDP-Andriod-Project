@@ -36,11 +36,11 @@ import java.util.Date;
 public class MapTabFragment extends Fragment {
 
     //    Initialise variables
+    public static boolean manualUpdateRequest = false;
+
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String TAG = "MapFragment";
     private PageViewModel pageViewModel;
-
-    public static boolean manualUpdateRequest = false;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -75,8 +75,8 @@ public class MapTabFragment extends Fragment {
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        View root =  null;
-        if(MainActivity.colorState == 0) {
+        View root = null;
+        if (MainActivity.colorState == 0) {
             root = inflater.inflate(R.layout.activity_map, container, false);
         } else {
             root = inflater.inflate(R.layout.activity_map_state2, container, false);

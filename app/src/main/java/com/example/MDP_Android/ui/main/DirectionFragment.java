@@ -50,7 +50,6 @@ public class DirectionFragment extends DialogFragment {
         if (savedInstanceState != null)
             direction = savedInstanceState.getString("direction");
 
-
         final Spinner spinner = (Spinner) rootView.findViewById(R.id.directionDropdownSpinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.planets_array, android.R.layout.simple_spinner_item);

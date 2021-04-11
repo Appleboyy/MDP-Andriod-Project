@@ -39,6 +39,7 @@ public class CommFragment extends Fragment {
 
     //    Initialise variables
     public static final Integer RecordAudioRequestCode = 1;
+
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String TAG = "CommFragment";
     private static GridMap gridMap;
@@ -91,13 +92,13 @@ public class CommFragment extends Fragment {
         gridMap = MainActivity.getGridMap();
 
 //         Initialise buttons for send and voice
-        sendFAB = (FloatingActionButton) root.findViewById(R.id.messageButton);
-        voiceFAB = (FloatingActionButton) root.findViewById(R.id.voiceButton);
+        sendFAB = root.findViewById(R.id.messageButton);
+        voiceFAB = root.findViewById(R.id.voiceButton);
 
 //         Initialise communication Box
-        messageReceivedTextView = (TextView) root.findViewById(R.id.messageReceivedTextView);
+        messageReceivedTextView = root.findViewById(R.id.messageReceivedTextView);
         messageReceivedTextView.setMovementMethod(new ScrollingMovementMethod());
-        typeBoxEditText = (EditText) root.findViewById(R.id.typeBoxEditText);
+        typeBoxEditText = root.findViewById(R.id.typeBoxEditText);
 
 //         Initialise speech recognizer
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(getActivity());

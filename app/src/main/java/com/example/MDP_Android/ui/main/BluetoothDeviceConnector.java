@@ -38,15 +38,15 @@ import java.util.UUID;
 public class BluetoothDeviceConnector extends AppCompatActivity {
 
     //    Initialise Variables
-    private static final String TAG = "BluetoothPopUp";
-    private static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    private String connStatus;
-
     public static BluetoothDevice btDevice;
     public ArrayList<BluetoothDevice> newBTDevices;
     public ArrayList<BluetoothDevice> pairedBTDevices;
     public DeviceListAdapter newDeviceListAdapter;
     public DeviceListAdapter pairedDeviceListAdapter;
+
+    private static final String TAG = "BluetoothPopUp";
+    private static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private String connStatus;
 
     BluetoothAdapter bluetoothAdapter;
     TextView connStatusTextView;
@@ -68,7 +68,6 @@ public class BluetoothDeviceConnector extends AppCompatActivity {
                 if (BluetoothConnectionService.BluetoothConnectionStatus == false) {
                     startBTConnection(btDevice, myUUID);
                     Toast.makeText(BluetoothDeviceConnector.this, "Reconnection Success", Toast.LENGTH_SHORT).show();
-
                 }
                 reconnectionHandler.removeCallbacks(reconnectionRunnable);
                 retryConnection = false;
@@ -120,7 +119,6 @@ public class BluetoothDeviceConnector extends AppCompatActivity {
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2) {
                     Log.d(TAG, "onItemClick: Initiating pairing with " + deviceName);
                     newBTDevices.get(i).createBond();
-
                     bluetoothConnection = new BluetoothConnectionService(BluetoothDeviceConnector.this);
                     btDevice = newBTDevices.get(i);
                 }
@@ -239,15 +237,12 @@ public class BluetoothDeviceConnector extends AppCompatActivity {
             if (bluetoothAdapter.isDiscovering()) {
                 bluetoothAdapter.cancelDiscovery();
                 Log.d(TAG, "toggleButton: Cancelling Discovery.");
-
                 checkBTPermissions();
-
                 bluetoothAdapter.startDiscovery();
                 IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                 registerReceiver(broadcastReceiver3, discoverDevicesIntent);
             } else if (!bluetoothAdapter.isDiscovering()) {
                 checkBTPermissions();
-
                 bluetoothAdapter.startDiscovery();
                 IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                 registerReceiver(broadcastReceiver3, discoverDevicesIntent);
@@ -275,7 +270,6 @@ public class BluetoothDeviceConnector extends AppCompatActivity {
             }
         } else {
             Log.d(TAG, "checkBTPermissions: No need to check permissions. SDK version < LOLLIPOP.");
-
         }
     }
 
@@ -285,7 +279,6 @@ public class BluetoothDeviceConnector extends AppCompatActivity {
             String action = intent.getAction();
             if (action.equals(bluetoothAdapter.ACTION_STATE_CHANGED)) {
                 final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
-
                 switch (state) {
                     case BluetoothAdapter.STATE_OFF:
                         Log.d(TAG, "mBroadcastReceiver1: STATE OFF");
@@ -311,7 +304,6 @@ public class BluetoothDeviceConnector extends AppCompatActivity {
             String action = intent.getAction();
             if (action.equals(bluetoothAdapter.ACTION_SCAN_MODE_CHANGED)) {
                 final int mode = intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, BluetoothAdapter.ERROR);
-
                 switch (mode) {
                     case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
                         Log.d(TAG, "mBroadcastReceiver2: Discoverability Enabled.");
@@ -339,14 +331,12 @@ public class BluetoothDeviceConnector extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
             Log.d(TAG, "onReceive: ACTION FOUND.");
-
             if (action.equals(BluetoothDevice.ACTION_FOUND)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 newBTDevices.add(device);
                 Log.d(TAG, "onReceive: " + device.getName() + " : " + device.getAddress());
                 newDeviceListAdapter = new DeviceListAdapter(context, R.layout.device_adapter_view, newBTDevices);
                 otherDevicesListView.setAdapter(newDeviceListAdapter);
-
             }
         }
     };
@@ -356,7 +346,6 @@ public class BluetoothDeviceConnector extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
-
             if (action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
                 BluetoothDevice mDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (mDevice.getBondState() == BluetoothDevice.BOND_BONDED) {
@@ -382,14 +371,12 @@ public class BluetoothDeviceConnector extends AppCompatActivity {
             String status = intent.getStringExtra("Status");
             sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
             editor = sharedPreferences.edit();
-
             if (status.equals("connected")) {
                 try {
                     progressDialog.dismiss();
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
-
                 Log.d(TAG, "broadcastReceiver5: Device now connected to " + mDevice.getName());
                 Toast.makeText(BluetoothDeviceConnector.this, "Device now connected to " + mDevice.getName(), Toast.LENGTH_LONG).show();
                 editor.putString("connStatus", "Connected to " + mDevice.getName());
@@ -398,14 +385,12 @@ public class BluetoothDeviceConnector extends AppCompatActivity {
                 Log.d(TAG, "broadcastReceiver5: Disconnected from " + mDevice.getName());
                 Toast.makeText(BluetoothDeviceConnector.this, "Disconnected from " + mDevice.getName(), Toast.LENGTH_LONG).show();
                 bluetoothConnection = new BluetoothConnectionService(BluetoothDeviceConnector.this);
-
                 sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
                 editor = sharedPreferences.edit();
                 editor.putString("connStatus", "Disconnected");
                 TextView connStatusTextView = findViewById(R.id.connStatusTextView);
                 connStatusTextView.setText("Disconnected");
                 editor.commit();
-
                 try {
                     progressDialog.show();
                 } catch (Exception e) {
@@ -425,7 +410,6 @@ public class BluetoothDeviceConnector extends AppCompatActivity {
 
     public void startBTConnection(BluetoothDevice device, UUID uuid) {
         Log.d(TAG, "startBTConnection: Initializing RFC Bluetooth Connection");
-
         bluetoothConnection.startClientThread(device, uuid);
     }
 
